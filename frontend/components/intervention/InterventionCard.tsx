@@ -11,9 +11,15 @@ const severityBorderColors = {
 };
 
 const severityGlowColors = {
-  yellow: "shadow-yellow-500/5",
-  orange: "shadow-orange-500/10",
-  red: "shadow-red-500/10",
+  yellow: "shadow-[0_0_40px_rgba(234,179,8,0.15)]",
+  orange: "shadow-[0_0_40px_rgba(249,115,22,0.15)]",
+  red: "shadow-[0_0_40px_rgba(239,68,68,0.15)]",
+};
+
+const severityGradients = {
+  yellow: "from-yellow-500/10",
+  orange: "from-orange-500/10",
+  red: "from-red-500/10",
 };
 
 interface InterventionCardProps {
@@ -33,69 +39,67 @@ export function InterventionCard({
 
   return (
     <div
-      className={`bg-zinc-900 border-2 ${severityBorderColors[severity]} ${severityGlowColors[severity]} rounded-2xl shadow-2xl overflow-hidden`}
+      className={`relative bg-zinc-900/40 backdrop-blur-xl border ${severityBorderColors[severity]} ${severityGlowColors[severity]} rounded-3xl overflow-hidden`}
     >
-      {/* Header */}
-      <div className="px-6 pt-6 pb-5 border-b border-zinc-800">
-        <div className="flex items-start justify-between mb-3">
-          <SeverityBadge severity={severity} />
-          <span className="text-2xl font-bold text-zinc-100">{formatCurrency(purchaseAmount)}</span>
+      <div className={`absolute inset-0 bg-gradient-to-b ${severityGradients[severity]} via-transparent to-transparent pointer-events-none opacity-50`} />
+      
+      <div className="relative z-10">
+        <div className="px-8 pt-8 pb-6 border-b border-white/5 bg-zinc-900/20">
+          <div className="flex items-start justify-between mb-4">
+            <SeverityBadge severity={severity} />
+            <span className="text-3xl font-black text-white tracking-tight">{formatCurrency(purchaseAmount)}</span>
+          </div>
+          {merchant && (
+            <p className="text-sm font-medium text-zinc-500 mb-2">
+              Pending purchase at <span className="text-zinc-200 font-bold">{merchant}</span>
+            </p>
+          )}
+          <p className="text-base font-medium text-zinc-300 leading-relaxed">{summary_line}</p>
         </div>
-        {merchant && (
-          <p className="text-sm text-zinc-500">
-            Pending purchase at <span className="text-zinc-300 font-medium">{merchant}</span>
-          </p>
-        )}
-        <p className="text-base font-medium text-zinc-300 mt-2 leading-snug">{summary_line}</p>
-      </div>
 
-      {/* Insights */}
-      <div className="px-6 py-5 border-b border-zinc-800">
-        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">
-          What the numbers say
-        </p>
-        <InsightList insights={insights} />
-      </div>
-
-      {/* Impact metrics */}
-      <div className="px-6 py-5 border-b border-zinc-800 grid grid-cols-2 gap-4">
-        <div className="bg-zinc-800/60 rounded-xl p-3.5">
-          <p className="text-xs text-zinc-500 mb-1">Goal delayed by</p>
-          <p className="text-xl font-bold text-red-400">
-            {goal_impact_days}{" "}
-            <span className="text-sm font-medium">{pluralize(goal_impact_days, "day")}</span>
-          </p>
+        <div className="px-8 py-6 border-b border-white/5">
+          <InsightList insights={insights} />
         </div>
-        <div className="bg-zinc-800/60 rounded-xl p-3.5">
-          <p className="text-xs text-zinc-500 mb-1">Redirected value (6mo)</p>
-          <p className="text-xl font-bold text-emerald-400">{formatCurrency(redirect_value_6mo)}</p>
-        </div>
-      </div>
 
-      {/* Alternative suggestion */}
-      {alternative_suggestion && (
-        <div className="px-6 py-4 border-b border-zinc-800 bg-purple-500/5">
-          <div className="flex items-start gap-3">
-            <span className="text-lg">💡</span>
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-purple-400 mb-1">
-                Better option
-              </p>
-              <p className="text-sm text-zinc-300 leading-relaxed">{alternative_suggestion}</p>
-            </div>
+        <div className="px-8 py-6 border-b border-white/5 grid grid-cols-2 gap-4">
+          <div className="bg-zinc-900/40 border border-white/5 rounded-2xl p-5 hover:bg-zinc-800/40 transition-colors group">
+            <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Goal delayed by</p>
+            <p className="text-2xl font-black text-red-400 group-hover:scale-105 transition-transform origin-left">
+              {goal_impact_days}{" "}
+              <span className="text-sm font-bold text-red-400/70">{pluralize(goal_impact_days, "day")}</span>
+            </p>
+          </div>
+          <div className="bg-zinc-900/40 border border-white/5 rounded-2xl p-5 hover:bg-zinc-800/40 transition-colors group">
+            <p className="text-[11px] font-bold text-zinc-500 uppercase tracking-widest mb-2">Redirect value (6mo)</p>
+            <p className="text-2xl font-black text-emerald-400 group-hover:scale-105 transition-transform origin-left">
+              {formatCurrency(redirect_value_6mo)}
+            </p>
           </div>
         </div>
-      )}
 
-      {/* Decision buttons */}
-      <div className="px-6 py-5">
-        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-4">
-          What do you want to do?
-        </p>
-        <DecisionButtons
-          onDecision={onDecision}
-          hasAlternative={!!alternative_suggestion}
-        />
+        {alternative_suggestion && (
+          <div className="px-8 py-6 border-b border-white/5">
+            <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-5 flex items-start gap-4">
+              <span className="text-xl bg-purple-500/20 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">💡</span>
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-widest text-purple-400 mb-1.5">
+                  Better option
+                </p>
+                <p className="text-sm font-medium text-zinc-300 leading-relaxed">{alternative_suggestion}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="px-8 py-8 bg-zinc-900/20">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-zinc-400 mb-5">
+            What do you want to do?
+          </p>
+          <DecisionButtons
+            onDecision={onDecision}
+            hasAlternative={!!alternative_suggestion}
+          />
+        </div>
       </div>
     </div>
   );

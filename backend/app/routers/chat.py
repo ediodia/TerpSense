@@ -41,27 +41,35 @@ def _is_crisis(message: str) -> bool:
 
 
 def _build_chat_system(ctx: ChatContext) -> str:
+    # 1. Protect against NoneType values if fields are missing in the request
+    amount = ctx.purchase_amount if ctx.purchase_amount is not None else 0.00
     merchant = ctx.merchant or ctx.category or "this purchase"
+    days = ctx.goal_impact_days if ctx.goal_impact_days is not None else 0
+    redirect = ctx.redirect_value_6mo if ctx.redirect_value_6mo is not None else 0.00
+    
     severity_desc = {
         "red": "high-risk — this purchase significantly conflicts with the user's goals",
         "orange": "moderate-risk — worth pausing to reconsider",
         "yellow": "low-risk — minor concern",
     }.get(ctx.severity or "yellow", "")
 
-    return f"""You are TerpSense, a warm and emotionally intelligent financial coach. You genuinely care about the person you're talking to — not just their money, but their wellbeing.
+    # 2. Re-formatted carefully to keep the data insertion clean
+    return (
+        f"You are TerpSense, a warm and emotionally intelligent financial coach. "
+        f"You genuinely care about the person you're talking to — not just their money, but their wellbeing.\n\n"
+        f"Current purchase context (reference when relevant):\n"
+        f"- Item: {merchant} (${amount:.2f} in {ctx.category or 'Uncategorized'})\n"
+        f"- Risk level: {severity_desc}\n"
+        f"- If they proceed: delays savings goal by {days} days\n"
+        f"- If they redirect: grows to ${redirect:.2f} in 6 months\n\n"
+        f"Guidelines:\n"
+        f"- If someone shares something emotional or personal, respond with genuine empathy first. Don't force finances into every response.\n"
+        f"- If someone asks about anything outside finance — relationships, stress, anxiety, addiction — respond like a caring friend would.\n"
+        f"- For financial questions, be specific and cite the real numbers above.\n"
+        f"- Sound like a smart, caring friend — not a bank chatbot.\n"
+        f"- Keep responses to 3-4 sentences max. Never preachy."
+    )
 
-Current purchase context (reference when relevant):
-- Item: {merchant} (${ctx.purchase_amount:.2f} in {ctx.category})
-- Risk level: {severity_desc}
-- If they proceed: delays savings goal by {ctx.goal_impact_days} days
-- If they redirect: grows to ${ctx.redirect_value_6mo:.2f} in 6 months
-
-Guidelines:
-- If someone shares something emotional or personal, respond with genuine empathy first. Don't force finances into every response.
-- If someone asks about anything outside finance — relationships, stress, anxiety, addiction — respond like a caring friend would.
-- For financial questions, be specific and cite the real numbers above.
-- Sound like a smart, caring friend — not a bank chatbot.
-- Keep responses to 3-4 sentences max. Never preachy."""
 
 
 @router.post("/api/chat", response_model=ChatResponse)
@@ -123,7 +131,7 @@ def _local_fallback(message: str, ctx: ChatContext) -> str:
     if any(w in msg for w in ["save", "savings", "goal"]):
         return (
             f"Redirecting this ${amount:.2f} to your savings goal would bring you {days} days closer to hitting it. "
-            f"At 10% annual returns, that becomes ${round(amount * (1.1 ** 10)):.0f} in 10 years."
+            f"At 10% annual returns, that becomes ${amount * (1.1 ** 10):.0f} in 10 years."
         )
     return (
         f"I'm here for you. This is a {ctx.severity or 'yellow'}-risk purchase — "
