@@ -198,5 +198,15 @@ A hardcoded contextual fallback runs if the AI call fails, so the demo never bre
 
 **Founders:**
 
+<<<<<<< HEAD
 - Frontend and Infra Engineer: Ediale Odia
 - Backend and AI Engineer: Aman Bollam
+=======
+Lead Dev and AI Engineer: Aman Bollam
+
+Frontend and AI Engineer: Ediale Odia
+
+##
+
+Product Designer and Backend Engineer: Jared Josue
+>>>>>>> upstream/main
