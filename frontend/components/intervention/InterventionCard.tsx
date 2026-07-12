@@ -1,8 +1,8 @@
 import { formatCurrency, pluralize } from "@/lib/utils";
 import type { Decision, InterventionResult } from "@/types";
-import { SeverityBadge } from "./SeverityBadge";
+import SeverityBadge from "./SeverityBadge";
 import { InsightList } from "./InsightList";
-import { DecisionButtons } from "./DecisionButtons";
+import DecisionButtons from "./DecisionButtons";
 
 const severityBorderColors = {
   yellow: "border-yellow-500/30",

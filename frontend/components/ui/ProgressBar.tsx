@@ -3,19 +3,42 @@
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
+type BarColor = "emerald" | "yellow" | "orange" | "red" | "blue" | "purple";
+
 interface ProgressBarProps {
   value: number; // 0–100
   animated?: boolean;
-  color?: "emerald" | "yellow" | "orange" | "red";
+  color?: BarColor;
   className?: string;
   showLabel?: boolean;
+  /** Two-tone gradient fill with a subtle moving shimmer, matching GoalCard's progress style */
+  gradient?: boolean;
+  /** Track/bar thickness */
+  size?: "sm" | "md" | "lg";
 }
 
-const colorClasses = {
+const colorClasses: Record<BarColor, string> = {
   emerald: "bg-emerald-500",
   yellow: "bg-yellow-400",
   orange: "bg-orange-400",
   red: "bg-red-500",
+  blue: "bg-blue-500",
+  purple: "bg-purple-500",
+};
+
+const gradientClasses: Record<BarColor, string> = {
+  emerald: "bg-gradient-to-r from-emerald-500 to-teal-400",
+  yellow: "bg-gradient-to-r from-yellow-400 to-amber-300",
+  orange: "bg-gradient-to-r from-orange-500 to-amber-400",
+  red: "bg-gradient-to-r from-red-500 to-rose-400",
+  blue: "bg-gradient-to-r from-blue-500 to-cyan-400",
+  purple: "bg-gradient-to-r from-purple-500 to-fuchsia-400",
+};
+
+const sizeClasses = {
+  sm: "h-1.5",
+  md: "h-2",
+  lg: "h-3",
 };
 
 export function ProgressBar({
@@ -24,6 +47,8 @@ export function ProgressBar({
   color = "emerald",
   className,
   showLabel = false,
+  gradient = false,
+  size = "md",
 }: ProgressBarProps) {
   const [displayed, setDisplayed] = useState(animated ? Math.max(0, value - 10) : value);
 
@@ -41,15 +66,19 @@ export function ProgressBar({
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
+      <div className={cn("w-full bg-zinc-950 border border-white/5 rounded-full overflow-hidden shadow-inner", sizeClasses[size])}>
         <div
           className={cn(
-            "h-full rounded-full transition-all ease-out",
-            colorClasses[color],
+            "h-full rounded-full transition-all ease-out relative",
+            gradient ? gradientClasses[color] : colorClasses[color],
             animated && "duration-1000"
           )}
           style={{ width: `${clamped}%` }}
-        />
+        >
+          {gradient && (
+            <div className="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite] -translate-x-full" />
+          )}
+        </div>
       </div>
       {showLabel && (
         <span className="text-xs text-zinc-500 mt-1 inline-block">{Math.round(clamped)}%</span>

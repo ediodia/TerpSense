@@ -91,7 +91,7 @@ async def chat(body: ChatRequest):
             {"role": "user", "content": body.message},
         ],
         "temperature": 0.7,
-        "max_tokens": 200,
+        "max_completion_tokens": 200,
     }
 
     try:

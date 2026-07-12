@@ -148,7 +148,7 @@ def call_openai(
                 {"role": "user", "content": user_message},
             ],
             temperature=0.4,
-            max_tokens=500,
+            max_completion_tokens=500,
             response_format={"type": "json_object"},
         )
 

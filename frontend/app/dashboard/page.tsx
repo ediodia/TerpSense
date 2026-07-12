@@ -12,141 +12,11 @@ import {
 import type { Goal, Profile, SpendingSummary, Transaction } from "@/types";
 import { SpendingSummaryCard } from "@/components/dashboard/SpendingSummary";
 import { GoalCard } from "@/components/dashboard/GoalCard";
+import { TerpSenseLogo } from "@/components/dashboard/TerpSenseLogo";
+import { SpendingGauge } from "@/components/dashboard/SpendingGauge";
+import { XPBadge } from "@/components/dashboard/XPBadge";
+import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { useSessionStore } from "@/store/sessionStore";
-
-// Reusable animated count engine for premium visual entry transitions
-function AnimatedNumber({ value }: { value: number }) {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    const steps = 40;
-    const increment = value / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= value) {
-        setDisplay(value);
-        clearInterval(timer);
-      } else setDisplay(Math.floor(current));
-    }, 1000 / steps);
-    return () => clearInterval(timer);
-  }, [value]);
-  return <span>{display.toLocaleString()}</span>;
-}
-
-// Clean, modular high-fidelity TerpSense logomark
-export function TerpSenseLogo() {
-  return (
-    <div className="flex items-center gap-2 group cursor-pointer">
-      <div className="relative">
-        <div className="absolute inset-0 bg-emerald-500/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="relative z-10">
-          <rect width="32" height="32" rx="10" fill="#09090b" stroke="rgba(16, 185, 129, 0.5)" strokeWidth="1.5" />
-          <ellipse cx="16" cy="16" rx="8" ry="6" fill="#10b981" />
-          <ellipse cx="16" cy="16" rx="5" ry="4" fill="#059669" />
-          <line x1="16" y1="12" x2="16" y2="20" stroke="#047857" strokeWidth="1" />
-          <line x1="11" y1="16" x2="21" y2="16" stroke="#047857" strokeWidth="1" />
-          <line x1="12" y1="13" x2="20" y2="19" stroke="#047857" strokeWidth="1" />
-          <line x1="20" y1="13" x2="12" y2="19" stroke="#047857" strokeWidth="1" />
-          <ellipse cx="24" cy="14" rx="2.5" ry="2" fill="#10b981" />
-          <ellipse cx="8.5" cy="17" rx="1.5" ry="1" fill="#10b981" />
-          <ellipse cx="13" cy="22" rx="1.5" ry="1" fill="#10b981" />
-          <ellipse cx="19" cy="22" rx="1.5" ry="1" fill="#10b981" />
-          <ellipse cx="13" cy="10" rx="1.5" ry="1" fill="#10b981" />
-          <ellipse cx="19" cy="10" rx="1.5" ry="1" fill="#10b981" />
-        </svg>
-      </div>
-      <span className="text-lg font-bold tracking-tight text-white">
-        Terp<span className="text-emerald-500 font-black">Sense</span>
-      </span>
-    </div>
-  );
-}
-
-function SpendingGauge({ spent, budget }: { spent: number; budget: number }) {
-  const [animated, setAnimated] = useState(0);
-  const percent = Math.min(100, Math.round((spent / budget) * 100));
-  const radius = 40;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (animated / 100) * circumference;
-  const color = percent > 80 ? "#ef4444" : percent > 60 ? "#f97316" : "#10b981";
-
-  useEffect(() => {
-    const t = setTimeout(() => setAnimated(percent), 300);
-    return () => clearTimeout(t);
-  }, [percent]);
-
-  return (
-    <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-6 flex flex-col justify-center gap-4 h-full relative overflow-hidden shadow-2xl">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full pointer-events-none" />
-      <div className="flex items-center gap-5 relative z-10">
-        <div className="relative flex-shrink-0">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r={radius} fill="none" stroke="#27272a" strokeWidth="12" />
-            <circle
-              cx="50"
-              cy="50"
-              r={radius}
-              fill="none"
-              stroke={color}
-              strokeWidth="12"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              transform="rotate(-90 50 50)"
-              style={{ transition: "stroke-dashoffset 1.2s ease-out, stroke 0.3s" }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-xl font-black text-white">{percent}%</span>
-          </div>
-        </div>
-        <div className="flex-1">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1">Biweekly Budget</p>
-          <p className="text-2xl font-black text-white tracking-tight">
-            ${spent.toFixed(2)}
-          </p>
-          <p className="text-sm font-medium text-zinc-400">of ${budget}</p>
-          <div className="mt-3 inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-950 border border-white/5">
-            {percent > 80 ? (
-              <span className="text-xs text-red-400 font-bold">🚨 Almost out</span>
-            ) : percent > 60 ? (
-              <span className="text-xs text-orange-400 font-bold">⚠️ Slow down</span>
-            ) : (
-              <span className="text-xs text-emerald-400 font-bold">Core budget on track</span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function XPBadge({ xp = 75 }: { xp?: number }) {
-  const level = Math.floor(xp / 100) + 1;
-  const progress = xp % 100;
-  const [filled, setFilled] = useState(0);
-  useEffect(() => {
-    const t = setTimeout(() => setFilled(progress), 400);
-    return () => clearTimeout(t);
-  }, [progress]);
-
-  return (
-    <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-5 relative overflow-hidden shadow-2xl">
-      <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-purple-500/10 blur-2xl rounded-full pointer-events-none" />
-      <div className="flex items-center justify-between mb-3 relative z-10">
-        <span className="text-xs text-zinc-400 uppercase tracking-widest font-bold">Financial IQ</span>
-        <span className="text-sm font-black text-emerald-400 px-2 py-0.5 bg-emerald-500/10 rounded-md">Lvl {level}</span>
-      </div>
-      <div className="w-full bg-zinc-950 rounded-full h-3 overflow-hidden border border-white/5 relative z-10">
-        <div
-          className="h-full bg-gradient-to-r from-emerald-400 via-teal-500 to-blue-500 rounded-full transition-all duration-1000 ease-out"
-          style={{ width: `${filled}%` }}
-        />
-      </div>
-      <p className="text-xs font-medium text-zinc-500 mt-2 relative z-10">{progress}/100 XP to Level {level + 1}</p>
-    </div>
-  );
-}
 
 const CATEGORY_ICONS: Record<string, string> = {
   Clothing: "👕",
@@ -230,6 +100,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (dashboardNeedsRefresh) setDashboardNeedsRefresh(false);
     loadData(activeProfileId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const activeProfile = profiles.find((p) => p.id === activeProfileId);
@@ -281,8 +152,6 @@ export default function DashboardPage() {
   return (
     <main className="min-h-screen bg-transparent text-zinc-100 p-4 sm:p-6 lg:p-8 font-sans selection:bg-emerald-500/30">
       <div className="max-w-6xl mx-auto flex flex-col gap-4 relative z-10">
-        
-        {/* Top Navigation & Profile Header */}
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/40 border border-white/5 rounded-3xl p-4 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-4">
             <TerpSenseLogo />
@@ -320,10 +189,7 @@ export default function DashboardPage() {
           </div>
         </header>
 
-        {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          
-          {/* Left Column */}
           <div className="lg:col-span-8 flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <SpendingGauge spent={totalSpent} budget={biweeklyBudget} />
@@ -354,7 +220,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Motivational Banner */}
             <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-2xl">
               <p className="text-sm font-medium text-zinc-300 italic">"{message}"</p>
               {biggestRiskCategory ? (
@@ -369,7 +234,6 @@ export default function DashboardPage() {
               )}
             </div>
 
-            {/* Goals and Summary Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
                 {activeGoal && <GoalCard goal={activeGoal} />}
@@ -378,13 +242,11 @@ export default function DashboardPage() {
                 {summary && <SpendingSummaryCard summary={summary} />}
               </div>
             </div>
-            
+
             <XPBadge xp={75} />
           </div>
 
-          {/* Right Column (Transactions & Action Routing Target) */}
           <div className="lg:col-span-4 flex flex-col gap-4">
-            
             <Link
               href="/purchase"
               className="group relative overflow-hidden inline-flex items-center justify-center gap-2 bg-emerald-500 text-zinc-950 font-black py-5 rounded-3xl text-lg shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
@@ -422,7 +284,6 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            
           </div>
         </div>
       </div>

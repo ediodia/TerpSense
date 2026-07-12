@@ -19,3 +19,46 @@ export function pluralize(count: number, singular: string, plural?: string): str
 export function cn(...classes: (string | undefined | false | null)[]): string {
   return classes.filter(Boolean).join(" ");
 }
+
+// --- Shared design tokens ---
+export type Severity = "yellow" | "orange" | "red";
+
+export type SeverityConfig = {
+  label: string;
+  text: string;
+  border: string;
+  bg: string;
+  dot: string;
+  glow: string;
+  gradient: string;
+};
+
+export const SEVERITY_TOKENS: Record<Severity, SeverityConfig> = {
+  yellow: {
+    label: "Heads Up",
+    text: "text-yellow-400",
+    border: "border-yellow-500/30",
+    bg: "bg-yellow-500/10",
+    dot: "bg-yellow-500",
+    glow: "shadow-[0_0_40px_rgba(234,179,8,0.12)]",
+    gradient: "from-yellow-500/5",
+  },
+  orange: {
+    label: "Watch Out",
+    text: "text-orange-400",
+    border: "border-orange-500/30",
+    bg: "bg-orange-500/10",
+    dot: "bg-orange-500",
+    glow: "shadow-[0_0_40px_rgba(249,115,22,0.15)]",
+    gradient: "from-orange-500/5",
+  },
+  red: {
+    label: "Risky Move",
+    text: "text-red-400",
+    border: "border-red-500/40",
+    bg: "bg-red-500/10",
+    dot: "bg-red-500",
+    glow: "shadow-[0_0_40px_rgba(239,68,68,0.18)]",
+    gradient: "from-red-500/5",
+  },
+};
