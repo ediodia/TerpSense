@@ -143,7 +143,34 @@ function SpyScanner() {
   );
 }
 
-/* ---------------- PROCEED: literal Japanese exit sign, running man ---------------- */
+/* ---------------- PROCEED: Tokyo platform, bolting for the train ---------------- */
+function RunnerSprite() {
+  const limb = "white" as const;
+  return (
+    <svg viewBox="0 0 100 130" width="66" height="86" style={{ overflow: "visible" }}>
+      {/* shared head + torso */}
+      <circle cx="66" cy="16" r="10" fill={limb} />
+      <polyline points="60,24 40,62" stroke={limb} strokeWidth="15" strokeLinecap="round" fill="none" />
+
+      {/* pose A — leading leg fully extended, matches the reference pictogram */}
+      <g style={{ animation: "poseSwapA 0.24s steps(1) infinite" }}>
+        <polyline points="40,62 62,84 88,96" stroke={limb} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="40,62 22,78 30,56" stroke={limb} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="60,24 44,34 28,26" stroke={limb} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="60,24 74,38 66,54" stroke={limb} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </g>
+
+      {/* pose B — recovery stride, legs crossing under the body */}
+      <g style={{ animation: "poseSwapB 0.24s steps(1) infinite" }}>
+        <polyline points="40,62 54,76 50,58" stroke={limb} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="40,62 20,84 6,98" stroke={limb} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="60,24 76,34 70,50" stroke={limb} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        <polyline points="60,24 46,32 32,22" stroke={limb} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      </g>
+    </svg>
+  );
+}
+
 function ExitSignRunner() {
   return (
     <div
@@ -179,37 +206,75 @@ function ExitSignRunner() {
       <div className="absolute bottom-6 left-[15%] w-9 h-9 rounded-full border border-white/10 bg-zinc-800/40" />
       <div className="absolute bottom-6 right-[15%] w-9 h-9 rounded-full border border-white/10 bg-zinc-800/40" />
 
-      {/* Hanging cable + sign fixture */}
-      <div className="absolute top-14 left-1/2 -translate-x-1/2 flex flex-col items-center" style={{ animation: "cableSwing 4s ease-in-out infinite", transformOrigin: "top center" }}>
+      {/* Station nameplate — Shibuya, Yamanote line badge */}
+      <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-zinc-900/80 border border-white/10 rounded-md px-2 py-1 z-10">
+        <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-600 text-white text-[9px] font-black leading-none">JY</span>
+        <div className="flex flex-col leading-none">
+          <span className="text-white text-[10px] font-bold tracking-wide">渋谷</span>
+          <span className="text-zinc-400 text-[7px] tracking-[0.15em]">SHIBUYA</span>
+        </div>
+      </div>
+
+      {/* Hanging cable + sign fixture (the doorway the runner is bursting through) */}
+      <div className="absolute top-14 left-[18%] flex flex-col items-center" style={{ animation: "cableSwing 4s ease-in-out infinite", transformOrigin: "top center" }}>
         <div className="w-0.5 h-6 bg-zinc-600" />
-        <div className="relative w-56 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 5s linear infinite" }}>
-          <div className="bg-emerald-600 h-20 flex items-center px-3 relative overflow-hidden">
+        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 5s linear infinite" }}>
+          <div className="bg-emerald-600 h-16 flex items-center justify-center px-2 relative overflow-hidden">
             <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 30px rgba(0,0,0,0.3)" }} />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-0.5 z-10">
-              <span className="text-white font-black text-base tracking-widest leading-none">非常口</span>
-              <span className="text-white font-bold text-[10px] tracking-[0.3em] leading-none mt-1">EXIT</span>
+            <div className="flex flex-col items-center gap-0.5 z-10">
+              <span className="text-white font-black text-sm tracking-widest leading-none">非常口</span>
+              <span className="text-white font-bold text-[9px] tracking-[0.3em] leading-none mt-1">EXIT</span>
             </div>
           </div>
         </div>
-        {/* fixture housing bar */}
-        <div className="w-56 h-1.5 bg-zinc-700 border-t border-white/10" />
+        <div className="w-40 h-1.5 bg-zinc-700 border-t border-white/10" />
       </div>
 
-      {/* Running silhouette — full traverse of the scene at large scale */}
+      {/* Waiting train on the right, doors about to close */}
+      <div className="absolute bottom-6 right-0 w-16 h-28 bg-zinc-800/90 border-l border-t border-b border-white/10 rounded-l-md overflow-hidden">
+        <div className="absolute top-2 left-1.5 right-1.5 h-8 bg-zinc-950/70 rounded-sm border border-white/5" />
+        <div className="absolute top-12 left-2 w-0.5 h-14 bg-zinc-950" />
+        <div
+          className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-amber-400"
+          style={{ animation: "doorCloseBlink 0.6s ease-in-out infinite" }}
+        />
+      </div>
+
+      {/* Motion streaks trailing the runner */}
+      <div
+        className="absolute bottom-11 left-0 flex flex-col gap-1.5"
+        style={{ animation: "streakFade 3.4s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+      >
+        <span className="block w-8 h-0.5 bg-emerald-300/70 rounded-full" />
+        <span className="block w-6 h-0.5 bg-emerald-300/45 rounded-full" />
+        <span className="block w-4 h-0.5 bg-emerald-300/25 rounded-full" />
+      </div>
+
+      {/* Runner — already mid-stride at the doorway, then bolts for the train */}
       <div
         className="absolute bottom-6"
-        style={{ animation: "stationRunnerDash 2.4s cubic-bezier(0.4,0,0.6,1) infinite" }}
+        style={{ animation: "stationBurstDash 3.4s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
-        <span
-          className="block text-6xl select-none drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]"
-          style={{ animation: "stationLegStride 0.28s ease-in-out infinite alternate" }}
+        <div
+          className="drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+          style={{ animation: "runnerBob 0.24s ease-in-out infinite" }}
         >
-          🏃
-        </span>
+          <RunnerSprite />
+        </div>
       </div>
 
+      {/* Yellow tactile platform edge strip */}
+      <div
+        className="absolute bottom-0 left-0 w-full h-3"
+        style={{
+          backgroundColor: "#eab308",
+          backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.35) 1px, transparent 1.4px)",
+          backgroundSize: "6px 6px",
+          animation: "tactilePulse 3s ease-in-out infinite",
+        }}
+      />
       {/* Floor reflection strip */}
-      <div className="absolute bottom-0 left-0 w-full h-6 bg-gradient-to-t from-emerald-500/5 to-transparent" />
+      <div className="absolute bottom-3 left-0 w-full h-5 bg-gradient-to-t from-emerald-500/5 to-transparent" />
     </div>
   );
 }
