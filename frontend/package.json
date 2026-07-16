@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build --no-turbopack"git add frontend/package.json
+git commit -m "Disable Turbopack for production build to fix silent TypeScript check crash on Vercel"
+git push origin main,
     "start": "next start"
   },
   "dependencies": {
