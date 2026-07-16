@@ -9,8 +9,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TerpSense — Stop Bad Decisions Before They Happen",
-  description: "An AI agent for real-time financial decision intervention.",
+  title: "TerpSense — Stop bad decisions before they happen",
+  description: "TerpSense catches risky purchases before checkout, grounds every insight in your real spending data, and turns saving money into something that feels like winning.",
+  openGraph: {
+    title: "TerpSense — Stop bad decisions before they happen",
+    description: "TerpSense catches risky purchases before checkout, grounds every insight in your real spending data, and turns saving money into something that feels like winning.",
+    images: ["/og-image.png"],
+    url: "https://your-actual-vercel-url.vercel.app",
+  },
 };
 
 export default function RootLayout({
