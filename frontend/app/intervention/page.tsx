@@ -57,7 +57,7 @@ export default function InterventionPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: pendingPurchase!.user_id ?? 'demo',
+          user_id: activeProfileId ?? 'demo',
           message: messageText,
           context: {
             purchase_amount: pendingPurchase!.amount,
@@ -238,9 +238,8 @@ export default function InterventionPage() {
                   <button
                     onClick={() => analysis.alternative_suggestion && handleDecision('alternative')}
                     disabled={!analysis.alternative_suggestion || isSubmittingDecision}
-                    className={`bg-zinc-900/40 border border-white/5 transition-all rounded-xl p-3 text-left flex flex-col gap-1.5 ${
-                      analysis.alternative_suggestion && !isSubmittingDecision ? 'hover:border-purple-500/30 hover:bg-purple-500/10 group' : 'opacity-40 cursor-not-allowed'
-                    }`}
+                    className={`bg-zinc-900/40 border border-white/5 transition-all rounded-xl p-3 text-left flex flex-col gap-1.5 ${analysis.alternative_suggestion && !isSubmittingDecision ? 'hover:border-purple-500/30 hover:bg-purple-500/10 group' : 'opacity-40 cursor-not-allowed'
+                      }`}
                   >
                     <div className="w-7 h-7 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:scale-110 transition-transform text-sm">🔍</div>
                     <span className="block text-xs font-bold text-white tracking-tight">See Alternative</span>
