@@ -285,7 +285,7 @@ function ExitPictogramTitleCard() {
   return (
     <div
       className="absolute inset-0 flex items-center justify-center"
-      style={{ animation: "titleCardPhase 5.6s ease-in-out infinite" }}
+      style={{ animation: "titleCardPhase 9.5s ease-in-out infinite" }}
     >
       <div className="relative w-36 h-36 rounded-3xl bg-emerald-600 flex items-center justify-center gap-1 shadow-[0_0_60px_rgba(16,185,129,0.4)] overflow-hidden">
         <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 30px rgba(0,0,0,0.25)" }} />
@@ -310,7 +310,7 @@ function ExitPictogramTitleCard() {
 /* Act 2 — the full Shibuya platform scene, revealed by a transition ~1.3s in */
 function StationScene() {
   return (
-    <div className="absolute inset-0" style={{ animation: "stationScenePhase 5.6s ease-in-out infinite" }}>
+    <div className="absolute inset-0" style={{ animation: "stationScenePhase 9.5s ease-in-out infinite" }}>
       {/* Perforated ceiling */}
       <div
         className="absolute top-0 left-0 w-full h-24"
@@ -365,12 +365,12 @@ function StationScene() {
       <div className="absolute bottom-6 left-[46%] w-3 h-8 bg-zinc-700/40 rounded-t-full" style={{ animation: "idleSway 3.6s ease-in-out 0.4s infinite", transformOrigin: "bottom center" }} />
 
       {/* Screen flash the instant the runner reaches the train — the "made it" beat */}
-      <div className="absolute inset-0 bg-white pointer-events-none" style={{ animation: "arrivalFlash 5.6s ease-in-out infinite" }} />
+      <div className="absolute inset-0 bg-white pointer-events-none" style={{ animation: "arrivalFlash 9.5s ease-in-out infinite" }} />
 
       {/* Hanging cable + sign fixture — a callback to the title card, now in-scene */}
       <div className="absolute top-14 left-[18%] flex flex-col items-center" style={{ animation: "cableSwing 4s ease-in-out infinite", transformOrigin: "top center" }}>
         <div className="w-0.5 h-6 bg-zinc-600" />
-        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 5.6s linear infinite" }}>
+        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 9.5s linear infinite" }}>
           <div className="bg-emerald-600 h-16 flex items-center justify-center px-2 relative overflow-hidden">
             <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 30px rgba(0,0,0,0.3)" }} />
             <div className="flex flex-col items-center gap-0.5 z-10">
@@ -386,18 +386,18 @@ function StationScene() {
       <div className="absolute bottom-6 right-0 w-16 h-28 bg-zinc-800/90 border-l border-t border-b border-white/10 rounded-l-md overflow-hidden">
         <div className="absolute top-2 left-1.5 right-1.5 h-8 bg-zinc-950/70 rounded-sm border border-white/5" />
         {/* Sliding door panels, closed at rest, snap fully shut on arrival */}
-        <div className="absolute top-12 left-0 w-1/2 h-14 border-r border-zinc-950/80 bg-zinc-800/60" style={{ animation: "trainDoorLeftSlam 5.6s ease-in-out infinite" }} />
-        <div className="absolute top-12 right-0 w-1/2 h-14 border-l border-zinc-950/80 bg-zinc-800/60" style={{ animation: "trainDoorRightSlam 5.6s ease-in-out infinite" }} />
+        <div className="absolute top-12 left-0 w-1/2 h-14 border-r border-zinc-950/80 bg-zinc-800/60" style={{ animation: "trainDoorLeftSlam 9.5s ease-in-out infinite" }} />
+        <div className="absolute top-12 right-0 w-1/2 h-14 border-l border-zinc-950/80 bg-zinc-800/60" style={{ animation: "trainDoorRightSlam 9.5s ease-in-out infinite" }} />
         <div
           className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
-          style={{ animation: "trainDepartFlash 5.6s ease-in-out infinite" }}
+          style={{ animation: "trainDepartFlash 9.5s ease-in-out infinite" }}
         />
       </div>
 
       {/* Motion streaks trailing the runner */}
       <div
         className="absolute bottom-11 left-0 flex flex-col gap-1.5"
-        style={{ animation: "streakFade 5.6s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+        style={{ animation: "streakFade 9.5s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
         <span className="block w-8 h-0.5 bg-emerald-300/70 rounded-full" />
         <span className="block w-6 h-0.5 bg-emerald-300/45 rounded-full" />
@@ -407,7 +407,7 @@ function StationScene() {
       {/* Runner — appears once the scene has fully materialized, then bolts for the train */}
       <div
         className="absolute bottom-6"
-        style={{ animation: "stationBurstDash 5.6s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+        style={{ animation: "stationBurstDash 9.5s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
         <div
           className="drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]"
@@ -433,6 +433,106 @@ function StationScene() {
   );
 }
 
+/* Act 3 — inside the train, scrolling Tokyo skyline outside the window */
+function SeatedRider() {
+  const limb = "white" as const;
+  return (
+    <svg viewBox="0 0 100 100" width="72" height="72" style={{ overflow: "visible" }}>
+      <circle cx="50" cy="20" r="10" fill={limb} style={{ animation: "riderLookAround 9.5s ease-in-out infinite", transformOrigin: "50px 20px" }} />
+      <polyline points="50,30 50,55" stroke={limb} strokeWidth="13" strokeLinecap="round" fill="none" />
+      {/* bent legs, sitting */}
+      <polyline points="50,55 40,66 40,86" stroke={limb} strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <polyline points="50,55 63,66 63,86" stroke={limb} strokeWidth="11" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      {/* arms resting on lap */}
+      <polyline points="50,36 38,48 34,60" stroke={limb} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <polyline points="50,36 64,48 68,60" stroke={limb} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
+
+function TokyoSkyline() {
+  const buildings = useMemo(
+    () =>
+      Array.from({ length: 16 }, (_, i) => ({
+        id: i,
+        h: 22 + Math.random() * 55,
+        w: 9 + Math.random() * 9,
+        windows: Array.from({ length: 4 + Math.floor(Math.random() * 4) }, () => Math.random() > 0.4),
+      })),
+    []
+  );
+
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-gradient-to-b from-[#0d0a24] via-[#1a1442] to-[#2a2166]">
+      <div className="absolute top-3 right-6 w-6 h-6 rounded-full bg-amber-200 blur-[1px] shadow-[0_0_16px_6px_rgba(253,230,138,0.5)]" />
+      {/* Horizon glow — city light pollution, gives the buildings something to silhouette against */}
+      <div className="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-purple-400/25 to-transparent" />
+      <div className="absolute inset-0 flex items-end gap-1.5" style={{ animation: "skylineScroll 16s linear infinite" }}>
+        {[...buildings, ...buildings].map((b, i) => (
+          <div
+            key={i}
+            className="flex-shrink-0 bg-[#332b66] border-t border-indigo-300/30 relative"
+            style={{ width: b.w, height: `${b.h}%` }}
+          >
+            <div className="absolute inset-0 grid grid-cols-2 gap-[3px] p-[3px] content-start">
+              {b.windows.map((lit, wi) => (
+                <span key={wi} className="w-[3px] h-[3px] rounded-[1px]" style={{ backgroundColor: lit ? "rgba(252,211,77,0.9)" : "transparent" }} />
+              ))}
+            </div>
+          </div>
+        ))}
+        {/* Tokyo Tower silhouette — a signature landmark among the skyline */}
+        <div className="flex-shrink-0 relative w-8 h-[85%] flex items-end justify-center">
+          <svg viewBox="0 0 40 100" width="32" height="85%" style={{ overflow: "visible" }}>
+            <polygon points="20,0 26,60 14,60" fill="#dc2626" opacity="0.85" />
+            <polygon points="10,100 30,100 26,60 14,60" fill="#dc2626" opacity="0.7" />
+            <rect x="17" y="0" width="6" height="6" fill="#f87171" opacity="0.9" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TrainInteriorScene() {
+  const straps = useMemo(() => Array.from({ length: 4 }, (_, i) => i), []);
+
+  return (
+    <div className="absolute inset-0" style={{ animation: "trainInteriorPhase 9.5s ease-in-out infinite" }}>
+      {/* Car ceiling + hanging straps */}
+      <div className="absolute top-0 left-0 w-full h-10 bg-zinc-900 border-b border-white/10 z-10" />
+      {straps.map((i) => (
+        <div
+          key={i}
+          className="absolute top-10 w-px h-6 bg-zinc-600 z-10"
+          style={{ left: `${18 + i * 22}%`, animation: `strapSway 2.6s ease-in-out ${i * 0.3}s infinite`, transformOrigin: "top center" }}
+        >
+          <span className="absolute -bottom-2 -left-1.5 w-3 h-3 rounded-full border border-zinc-500" />
+        </div>
+      ))}
+
+      {/* Window showing the scrolling Tokyo skyline */}
+      <div className="absolute top-12 left-4 right-4 h-32 rounded-lg border-2 border-zinc-700 overflow-hidden">
+        <TokyoSkyline />
+        {/* Faint reflection streaks passing across the glass */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" style={{ animation: "windowGleam 4s ease-in-out infinite" }} />
+      </div>
+
+      {/* Seat rail below the window */}
+      <div className="absolute top-[184px] left-4 right-4 h-2 bg-zinc-800 rounded-sm border-t border-white/5" />
+
+      {/* Car floor + seat bench */}
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-b from-zinc-900 to-zinc-950" />
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-40 h-6 bg-emerald-900/40 border border-emerald-500/10 rounded-t-lg" />
+
+      {/* Seated rider — looks around, then relaxes */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 drop-shadow-[0_0_16px_rgba(16,185,129,0.35)]">
+        <SeatedRider />
+      </div>
+    </div>
+  );
+}
+
 function ExitSignRunner() {
   return (
     <div
@@ -441,6 +541,7 @@ function ExitSignRunner() {
     >
       <ExitPictogramTitleCard />
       <StationScene />
+      <TrainInteriorScene />
     </div>
   );
 }

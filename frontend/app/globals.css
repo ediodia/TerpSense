@@ -279,31 +279,40 @@ input[type="number"] {
   50%      { transform: translateY(-8px); }
 }
 
-/* --- Proceed: two-act Shibuya cutscene, all on a shared 5.6s clock --- */
-/* Act 1 (0-32%, ~1.8s): the plain green exit pictogram on its own.
-   Transition (24-36%): pictogram zooms out as the station fades/scales in.
-   Act 2 (36-94%, ~3.25s): full platform scene — runner appears, sprints,
+/* --- Proceed: three-act Shibuya cutscene, all on a shared 9.5s clock --- */
+/* Act 1 (0-21%, ~2s): the plain green exit pictogram on its own.
+   Act 2 (21-61%, ~3.8s): full platform scene — runner appears, sprints,
    catches the train, doors slam shut.
-   Reset (92-100%): station fades out, pictogram fades back in, loop replays. */
+   Act 3 (61-95%, ~3.2s): inside the train — Tokyo skyline scrolls past the
+   window while he looks around, then settles in.
+   Reset (95-100%): fades back to the pictogram, loop replays. */
 @keyframes titleCardPhase {
-  0%, 24%   { opacity: 1; transform: scale(1); }
-  32%       { opacity: 0; transform: scale(1.15); }
-  92%       { opacity: 0; transform: scale(1.15); }
-  100%      { opacity: 1; transform: scale(1); }
+  0%, 16%  { opacity: 1; transform: scale(1); }
+  21%      { opacity: 0; transform: scale(1.15); }
+  95%      { opacity: 0; transform: scale(1.15); }
+  100%     { opacity: 1; transform: scale(1); }
 }
 @keyframes stationScenePhase {
-  0%, 24%  { opacity: 0; transform: scale(0.96); }
-  36%      { opacity: 1; transform: scale(1); }
-  94%      { opacity: 1; transform: scale(1); }
-  100%     { opacity: 0; transform: scale(0.98); }
+  0%, 16%  { opacity: 0; transform: scale(0.96); }
+  21%      { opacity: 1; transform: scale(1); }
+  54%      { opacity: 1; transform: scale(1); }
+  61%      { opacity: 0; transform: scale(1.05); }
+  100%     { opacity: 0; transform: scale(0.96); }
+}
+@keyframes trainInteriorPhase {
+  0%, 54%  { opacity: 0; transform: scale(0.97); }
+  61%      { opacity: 1; transform: scale(1); }
+  92%      { opacity: 1; transform: scale(1); }
+  95%      { opacity: 0; transform: scale(1.02); }
+  100%     { opacity: 0; transform: scale(0.97); }
 }
 @keyframes stationBurstDash {
-  0%, 37%  { left: 6%;   opacity: 0; transform: scale(1)     rotate(-5deg); }
-  39%      { left: 6%;   opacity: 1; transform: scale(1.05)  rotate(-5deg); }
-  44%      { left: 13%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
-  70%      { left: 60%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
-  90%      { left: 110%; opacity: 1; transform: scale(1)     rotate(-9deg); }
-  93%      { left: 110%; opacity: 0; transform: scale(1)     rotate(-9deg); }
+  0%, 23%  { left: 6%;   opacity: 0; transform: scale(1)     rotate(-5deg); }
+  25%      { left: 6%;   opacity: 1; transform: scale(1.05)  rotate(-5deg); }
+  29%      { left: 13%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
+  46%      { left: 60%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
+  57%      { left: 110%; opacity: 1; transform: scale(1)     rotate(-9deg); }
+  59%      { left: 110%; opacity: 0; transform: scale(1)     rotate(-9deg); }
   100%     { left: 6%;   opacity: 0; transform: scale(1)     rotate(-5deg); }
 }
 @keyframes runnerBob {
@@ -321,20 +330,44 @@ input[type="number"] {
   100%      { opacity: 0; }
 }
 @keyframes streakFade {
-  0%, 44%   { opacity: 0; transform: translateX(0); }
-  50%       { opacity: 1; transform: translateX(-4px); }
-  86%       { opacity: 1; transform: translateX(-4px); }
-  90%, 100% { opacity: 0; transform: translateX(0); }
+  0%, 29%   { opacity: 0; transform: translateX(0); }
+  34%       { opacity: 1; transform: translateX(-4px); }
+  55%       { opacity: 1; transform: translateX(-4px); }
+  59%, 100% { opacity: 0; transform: translateX(0); }
 }
 /* The in-scene hanging sign gets one quick flicker right as the platform
    materializes — a small callback to the title card — then stays lit. */
 @keyframes signFlicker {
-  0%, 34%  { opacity: 1; }
-  37%      { opacity: 0.55; }
-  40%      { opacity: 1; }
-  43%      { opacity: 0.7; }
-  46%      { opacity: 1; }
+  0%, 20%  { opacity: 1; }
+  23%      { opacity: 0.55; }
+  25%      { opacity: 1; }
+  27%      { opacity: 0.7; }
+  29%      { opacity: 1; }
   100%     { opacity: 1; }
+}
+/* Act 3 — rider glances left, then right, then settles in for the ride,
+   timed to land within the interior's 61-95% visible window. */
+@keyframes riderLookAround {
+  0%, 63%  { transform: rotate(0deg); }
+  67%      { transform: rotate(-12deg); }
+  72%      { transform: rotate(0deg); }
+  77%      { transform: rotate(10deg); }
+  82%      { transform: rotate(0deg); }
+  88%, 95% { transform: rotate(0deg) translateY(1px); }
+  100%     { transform: rotate(0deg); }
+}
+/* Ambient — independent of the master clock, just continuous motion */
+@keyframes skylineScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes strapSway {
+  0%, 100% { transform: rotate(-4deg); }
+  50%      { transform: rotate(4deg); }
+}
+@keyframes windowGleam {
+  0%, 100% { opacity: 0.25; transform: translateX(-30%); }
+  50%      { opacity: 0.55; transform: translateX(30%); }
 }
 @keyframes cableSwing {
   0%, 100% { transform: rotate(-1.5deg); }
@@ -364,27 +397,27 @@ input[type="number"] {
   50%      { transform: rotate(2deg); }
 }
 /* Train doors sit shut, then visibly snap tighter with a flash right as the
-   runner reaches the train (~90% of stationBurstDash's cycle) — the "made
-   it" payoff the whole sprint has been building toward. */
+   runner reaches the train (~57% of the 9.5s cycle) — the "made it" payoff
+   the sprint has been building toward, right before Act 3 takes over. */
 @keyframes trainDoorLeftSlam {
-  0%, 88%   { transform: translateX(-1px); }
-  90%, 93%  { transform: translateX(0); }
-  96%, 100% { transform: translateX(-1px); }
+  0%, 55%   { transform: translateX(-1px); }
+  57%, 60%  { transform: translateX(0); }
+  63%, 100% { transform: translateX(-1px); }
 }
 @keyframes trainDoorRightSlam {
-  0%, 88%   { transform: translateX(1px); }
-  90%, 93%  { transform: translateX(0); }
-  96%, 100% { transform: translateX(1px); }
+  0%, 55%   { transform: translateX(1px); }
+  57%, 60%  { transform: translateX(0); }
+  63%, 100% { transform: translateX(1px); }
 }
 @keyframes trainDepartFlash {
-  0%, 88%   { background-color: #fbbf24; box-shadow: none; }
-  90%, 93%  { background-color: #4ade80; box-shadow: 0 0 8px 2px rgba(74, 222, 128, 0.7); }
-  96%, 100% { background-color: #fbbf24; box-shadow: none; }
+  0%, 55%   { background-color: #fbbf24; box-shadow: none; }
+  57%, 60%  { background-color: #4ade80; box-shadow: 0 0 8px 2px rgba(74, 222, 128, 0.7); }
+  63%, 100% { background-color: #fbbf24; box-shadow: none; }
 }
 @keyframes arrivalFlash {
-  0%, 88%, 100% { opacity: 0; }
-  91%           { opacity: 0.12; }
-  94%           { opacity: 0; }
+  0%, 55%, 100% { opacity: 0; }
+  58%           { opacity: 0.12; }
+  61%           { opacity: 0; }
 }
 
 /* --- Shared shimmer sweep, used by ProgressBar's gradient variant --- */
