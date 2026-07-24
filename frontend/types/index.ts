@@ -10,7 +10,7 @@ export type TransactionCategory =
 
 export type Severity = "green" | "yellow" | "orange" | "red";
 
-export type Decision = "proceed" | "delay" | "redirect" | "alternative";
+export type Decision = "proceed" | "delay" | "redirect" | "alternative" | "celebrate";
 
 export interface Transaction {
   id: string;

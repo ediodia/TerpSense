@@ -51,7 +51,7 @@ class DecisionRequest(BaseModel):
     purchase_amount: float
     category: str
     merchant: Optional[str] = None
-    decision: Literal["proceed", "delay", "redirect", "alternative"]
+    decision: Literal["proceed", "delay", "redirect", "alternative", "celebrate"]
     profile_id: Optional[str] = None
 
 

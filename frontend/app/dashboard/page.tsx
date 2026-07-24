@@ -19,10 +19,40 @@ import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { StreakBadge } from "@/components/dashboard/StreakBadge";
 import { ProtectedBadge } from "@/components/dashboard/ProtectedBadge";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
+import { OnboardingTour, type TourStep } from "@/components/dashboard/OnboardingTour";
 import { useSessionStore } from "@/store/sessionStore";
 import { useLoginStreak } from "@/lib/streak";
 import { getXP } from "@/lib/xp";
+import { useOnboarding } from "@/lib/onboarding";
 import { CATEGORY_ICONS, BIWEEKLY_BUDGET } from "@/lib/constants";
+
+const TOUR_STEPS: TourStep[] = [
+  {
+    target: "logo",
+    title: "This is home base",
+    description: "Click the TerpSense logo anytime, from anywhere in the app, to jump straight back to your dashboard.",
+  },
+  {
+    target: "streak",
+    title: "Keep your streak alive",
+    description: "Come back daily and stay on top of your spending to build a streak — it's tracked automatically.",
+  },
+  {
+    target: "evaluate-btn",
+    title: "Check before you buy",
+    description: "Before making a purchase, run it through here. You'll get an instant read on whether it's a smart move, grounded in your real spending.",
+  },
+  {
+    target: "activity",
+    title: "Everything in one place",
+    description: "Every transaction shows up here automatically, categorized and dated, so you always know where your money's going.",
+  },
+  {
+    target: "switch-profile",
+    title: "Try other spending styles",
+    description: "Switch between demo profiles to see how the same purchase can look totally different depending on someone's habits.",
+  },
+];
 
 const MOTIVATIONAL_MESSAGES = [
   "Your future self will thank you. 💪",
@@ -56,6 +86,7 @@ export default function DashboardPage() {
 
   const { streak, justIncremented } = useLoginStreak(activeProfileId);
   const [xp, setXp] = useState(0);
+  const { shouldShow: showTour, dismiss: dismissTour } = useOnboarding();
 
   async function loadData(profileId = activeProfileId, opts: { silent?: boolean } = {}) {
     try {
@@ -154,7 +185,9 @@ export default function DashboardPage() {
       <div className="max-w-6xl mx-auto flex flex-col gap-4 relative z-10">
         <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-zinc-900/40 border border-white/5 rounded-3xl p-4 backdrop-blur-xl shadow-2xl">
           <div className="flex items-center gap-4">
-            <TerpSenseLogo />
+            <div data-tour="logo">
+              <TerpSenseLogo />
+            </div>
             <div className="w-px h-8 bg-white/10 hidden sm:block" />
             {activeProfile && (
               <div className="flex items-center gap-3">
@@ -170,6 +203,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
+              data-tour="switch-profile"
               onClick={handleSwitchProfile}
               disabled={switching || profiles.length < 2}
               className="flex items-center justify-center w-10 h-10 bg-zinc-800/60 hover:bg-zinc-700/80 disabled:opacity-50 rounded-xl transition-all border border-white/5"
@@ -210,7 +244,9 @@ export default function DashboardPage() {
               <SpendingGauge spent={totalSpent} budget={biweeklyBudget} />
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4 flex-1">
-                  <StreakBadge streak={streak} justIncremented={justIncremented} />
+                  <div data-tour="streak">
+                    <StreakBadge streak={streak} justIncremented={justIncremented} />
+                  </div>
                   <ProtectedBadge amount={totalProtected} />
                   <div className="col-span-2 bg-zinc-900/40 border border-white/5 rounded-3xl p-4 flex items-center justify-between relative overflow-hidden shadow-2xl backdrop-blur-xl">
                     <div>
@@ -256,6 +292,7 @@ export default function DashboardPage() {
           <div className="lg:col-span-4 flex flex-col gap-4">
             <Link
               href="/purchase"
+              data-tour="evaluate-btn"
               className="group relative overflow-hidden inline-flex items-center justify-center gap-2 bg-emerald-500 text-zinc-950 font-black py-5 rounded-3xl text-lg shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
             >
               <span className="relative z-10 font-bold tracking-tight">Evaluate a Purchase</span>
@@ -263,7 +300,7 @@ export default function DashboardPage() {
               <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
             </Link>
 
-            <div className="flex-1 bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden flex flex-col min-h-[400px] shadow-2xl">
+            <div data-tour="activity" className="flex-1 bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl overflow-hidden flex flex-col min-h-[400px] shadow-2xl">
               <div className="px-6 py-5 border-b border-white/5 bg-zinc-900/20">
                 <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">Recent Activity</p>
               </div>
@@ -294,6 +331,10 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {showTour && !switching && !resetting && (
+        <OnboardingTour steps={TOUR_STEPS} onDone={dismissTour} />
+      )}
     </main>
   );
 }

@@ -35,7 +35,7 @@ export type SeverityConfig = {
 
 export const SEVERITY_TOKENS: Record<Severity, SeverityConfig> = {
   green: {
-    label: "You're Good",
+    label: "Fantastic Choice!",
     text: "text-emerald-400",
     border: "border-emerald-500/30",
     bg: "bg-emerald-500/10",

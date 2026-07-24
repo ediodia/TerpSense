@@ -184,6 +184,29 @@ input[type="number"] {
   }
 }
 
+/* Sun arcs across the sky once per hourglass cycle — visualizes a day passing */
+@keyframes sunArc {
+  0%   { left: 8%;  top: 58%; opacity: 0.5; transform: scale(0.8); }
+  50%  { left: 50%; top: 6%;  opacity: 1;   transform: scale(1.1); }
+  100% { left: 92%; top: 58%; opacity: 0.4; transform: scale(0.75); }
+}
+
+/* Warm-to-cool color pulse layered over the whole scene, synced to the sun's arc */
+@keyframes duskTint {
+  0%, 100% { background: rgba(251, 191, 36, 0.06); }
+  50%      { background: rgba(99, 102, 241, 0.10); }
+}
+
+/* Hourglass sand level actually drains/fills now instead of sitting static */
+@keyframes sandTopDrain {
+  0%   { height: 100%; }
+  100% { height: 0%; }
+}
+@keyframes sandBottomFill {
+  0%   { height: 0%; }
+  100% { height: 100%; }
+}
+
 /* --- Alternative: spy scanning with magnifying glass --- */
 @keyframes spyScan {
   0% {
@@ -217,6 +240,43 @@ input[type="number"] {
   50% {
     opacity: 0.5;
   }
+}
+
+/* One tile lights up as "found" right as the magnifying glass sweeps past it
+   (synced to spyScan's 4s loop) — gives the scan an actual payoff. */
+@keyframes tileFound {
+  0%, 38%   { background-color: rgba(168, 85, 247, 0.15); transform: scale(1); box-shadow: none; }
+  50%, 80%  { background-color: rgba(74, 222, 128, 0.35); transform: scale(1.15); box-shadow: 0 0 16px rgba(74, 222, 128, 0.5); }
+  95%, 100% { background-color: rgba(168, 85, 247, 0.15); transform: scale(1); box-shadow: none; }
+}
+@keyframes foundBadgePop {
+  0%, 40%   { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+  50%, 80%  { opacity: 1; transform: scale(1) rotate(0deg); }
+  90%, 100% { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+}
+
+/* --- Celebrate: trophy burst for a "Fantastic Choice!" green purchase --- */
+@keyframes raySpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes coinFall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(220px) rotate(360deg); opacity: 0; }
+}
+@keyframes sparkleTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  50%      { opacity: 1; transform: scale(1.15); }
+}
+@keyframes trophyRise {
+  0%   { transform: translateY(50px) scale(0.4); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes trophyFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
 }
 
 /* --- Proceed: Tokyo platform sprint scene --- */

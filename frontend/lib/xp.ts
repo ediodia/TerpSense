@@ -1,6 +1,7 @@
 const XP_DELTAS: Record<string, number> = {
   redirect: 75,
   alternative: 75,
+  celebrate: 50,
   delay: 40,
   proceed: 10,
 };

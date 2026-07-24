@@ -23,6 +23,7 @@ CONFIRMATION_MESSAGES = {
     "delay": "Got it. Come back in 7 days if you still want it.",
     "proceed": "Noted. No judgment — just keeping you informed.",
     "alternative": "Good thinking. A cheaper option could save you real money.",
+    "celebrate": "Fantastic choice! You've got the room for it — enjoy it.",
 }
 
 
@@ -130,7 +131,7 @@ async def record_decision(body: DecisionRequest):
                 goal_state[goal.id] = new_amount
                 updated_goal_amount = new_amount
 
-        elif body.decision == "proceed" and not _settings.use_mock_data:
+        elif body.decision in ("proceed", "celebrate") and not _settings.use_mock_data:
             account_id = get_account_id(body.profile_id)
             description = body.merchant or body.category
             await nessie.create_purchase(

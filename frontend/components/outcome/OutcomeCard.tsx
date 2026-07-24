@@ -77,9 +77,13 @@ function DesertHourglassScene() {
       className="relative w-full h-56 overflow-hidden rounded-2xl bg-gradient-to-b from-amber-950/40 via-amber-900/20 to-amber-950/60 border border-amber-500/10"
       style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
     >
+      {/* Day/night color pulse — one full cycle = one hourglass drain, reinforcing "time passing" */}
+      <div className="absolute inset-0 pointer-events-none" style={{ animation: "duskTint 6s ease-in-out infinite", mixBlendMode: "overlay" }} />
+
+      {/* Sun arcs across the sky instead of sitting still */}
       <div
-        className="absolute top-4 right-8 w-10 h-10 rounded-full bg-amber-400"
-        style={{ animation: "sunPulse 2.5s ease-in-out infinite" }}
+        className="absolute w-10 h-10 rounded-full bg-amber-400"
+        style={{ animation: "sunArc 6s ease-in-out infinite alternate, sunPulse 2.5s ease-in-out infinite" }}
       />
       <svg className="absolute bottom-0 left-0 w-full h-32" viewBox="0 0 400 100" preserveAspectRatio="none">
         <polygon points="40,90 90,20 140,90" fill="#78350f" opacity="0.55" />
@@ -94,12 +98,12 @@ function DesertHourglassScene() {
 
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-20 h-32 flex flex-col items-center">
-          <div className="w-20 h-14 border-2 border-amber-300/70 rounded-t-md bg-amber-950/40 relative overflow-hidden">
-            <div className="absolute bottom-0 left-0 w-full h-3 bg-amber-400/80" />
+          <div className="w-20 h-14 border-2 border-amber-300/70 rounded-t-md bg-amber-950/40 relative overflow-hidden flex flex-col justify-end">
+            <div className="w-full bg-amber-400/80" style={{ animation: "sandTopDrain 6s linear infinite" }} />
           </div>
           <div className="w-1.5 h-4 bg-amber-300/50" />
           <div className="w-20 h-14 border-2 border-amber-300/70 rounded-b-md bg-amber-950/40 relative overflow-hidden flex items-end">
-            <div className="w-full h-8 bg-amber-400/70 rounded-t-full" />
+            <div className="w-full rounded-t-full bg-amber-400/70" style={{ animation: "sandBottomFill 6s linear infinite" }} />
           </div>
 
           {sandGrains.map((g) => (
@@ -121,14 +125,31 @@ function DesertHourglassScene() {
 
 /* ---------------- ALTERNATIVE: spy scanning with magnifying glass ---------------- */
 function SpyScanner() {
+  // Roughly where spyScan's path (translate 90px, 40px at 50%) passes over the grid —
+  // this tile "lights up found" right as the glass sweeps by, giving the scan a payoff.
+  const targetIndex = 10;
+
   return (
     <div
       className="relative w-full h-40 overflow-hidden rounded-2xl bg-purple-950/20 border border-purple-500/10"
       style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
     >
-      <div className="absolute inset-0 grid grid-cols-6 grid-rows-3 gap-1 p-3 opacity-40">
+      <div className="absolute inset-0 grid grid-cols-6 grid-rows-3 gap-1 p-3">
         {Array.from({ length: 18 }).map((_, i) => (
-          <div key={i} className="bg-purple-500/20 rounded-sm" />
+          <div
+            key={i}
+            className="relative rounded-sm bg-purple-500/15"
+            style={i === targetIndex ? { animation: "tileFound 4s ease-in-out infinite" } : undefined}
+          >
+            {i === targetIndex && (
+              <span
+                className="absolute -top-1.5 -right-1.5 text-[10px] leading-none"
+                style={{ animation: "foundBadgePop 4s ease-in-out infinite" }}
+              >
+                🏷️
+              </span>
+            )}
+          </div>
         ))}
       </div>
 
@@ -145,6 +166,85 @@ function SpyScanner() {
             <span className="absolute inset-0 flex items-center justify-center text-lg">🕵️</span>
           </div>
           <div className="absolute -bottom-3 -right-3 w-6 h-1.5 bg-purple-300 rotate-45 rounded-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- CELEBRATE: trophy burst for a confident green purchase ---------------- */
+function TrophyBurst() {
+  const sparkles = useMemo(
+    () =>
+      Array.from({ length: 16 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 1.2 + Math.random() * 1.2,
+        size: 10 + Math.random() * 8,
+      })),
+    []
+  );
+  const coins = useMemo(
+    () =>
+      Array.from({ length: 10 }, (_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 2.5,
+        duration: 2.5 + Math.random() * 1.5,
+      })),
+    []
+  );
+
+  return (
+    <div
+      className="relative w-full h-64 overflow-hidden rounded-2xl bg-gradient-to-b from-amber-950/50 via-[#1a1206] to-black border border-amber-500/20"
+      style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
+    >
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="w-72 h-72 rounded-full bg-amber-400/10 blur-3xl" style={{ animation: "screenPulse 2s ease-in-out infinite" }} />
+      </div>
+
+      <div className="absolute inset-0 flex items-center justify-center" style={{ animation: "raySpin 14s linear infinite" }}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-40 bg-gradient-to-t from-transparent via-amber-300/25 to-transparent"
+            style={{ transform: `rotate(${i * 45}deg)` }}
+          />
+        ))}
+      </div>
+
+      {coins.map((c) => (
+        <div
+          key={c.id}
+          className="absolute top-0 w-3 h-3 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 border border-yellow-200/50 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
+          style={{ left: `${c.left}%`, animation: `coinFall ${c.duration}s linear ${c.delay}s infinite` }}
+        />
+      ))}
+
+      {sparkles.map((s) => (
+        <span
+          key={s.id}
+          className="absolute text-amber-200"
+          style={{
+            left: `${s.left}%`,
+            top: `${s.top}%`,
+            fontSize: s.size,
+            animation: `sparkleTwinkle ${s.duration}s ease-in-out ${s.delay}s infinite`,
+          }}
+        >
+          ✦
+        </span>
+      ))}
+
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="text-7xl drop-shadow-[0_0_30px_rgba(251,191,36,0.6)]"
+          style={{ animation: "trophyRise 0.9s cubic-bezier(0.34,1.56,0.64,1) forwards, trophyFloat 2.4s ease-in-out 0.9s infinite" }}
+        >
+          🏆
         </div>
       </div>
     </div>
@@ -364,7 +464,7 @@ export function OutcomeCard({
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3800);
       playWinSound();
-    } else if (decision === "alternative") {
+    } else if (decision === "alternative" || decision === "celebrate") {
       playWinSound();
     }
   }, [decision]);
@@ -460,6 +560,23 @@ export function OutcomeCard({
             <p className="text-sm text-zinc-300 leading-relaxed">{result.alternative_suggestion}</p>
           </div>
         )}
+        <XPBar before={xpBefore} after={xpAfter} />
+      </div>
+    );
+  }
+
+  if (decision === "celebrate") {
+    return (
+      <div className="text-center space-y-4 pt-2">
+        <TrophyBurst />
+        <h2 className="text-2xl font-bold text-amber-400">Fantastic choice! 🎉</h2>
+        <p className="text-zinc-400 text-sm">{confirmationMessage}</p>
+        <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 text-left">
+          <p className="text-xs text-amber-400 uppercase tracking-widest font-semibold mb-2">Why this one's fine</p>
+          <p className="text-sm text-zinc-300 leading-relaxed">
+            You're well within budget and this doesn't put any goal at risk — no need to second-guess it.
+          </p>
+        </div>
         <XPBar before={xpBefore} after={xpAfter} />
       </div>
     );

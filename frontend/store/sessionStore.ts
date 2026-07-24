@@ -38,7 +38,10 @@ export const useSessionStore = create<SessionState>((set) => ({
   spendingSummary: null,
   dashboardNeedsRefresh: false,
 
-  setPendingPurchase: (purchase) => set({ pendingPurchase: purchase }),
+  // Staging a new purchase always starts a fresh decision — otherwise a stale
+  // `decision` from a previous purchase could make the new intervention page
+  // think it was already decided (see intervention/page.tsx's replay guard).
+  setPendingPurchase: (purchase) => set({ pendingPurchase: purchase, decision: null, updatedGoalAmount: null }),
   setInterventionResult: (result) => set({ interventionResult: result }),
   setDecision: (decision) => set({ decision }),
   setUpdatedGoalAmount: (amount) => set({ updatedGoalAmount: amount }),

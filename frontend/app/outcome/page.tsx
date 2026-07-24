@@ -11,6 +11,7 @@ const CONFIRMATION_MESSAGES: Record<string, string> = {
   delay: "Got it. Come back in 7 days if you still want it.",
   proceed: "Noted. No judgment, just keeping you informed.",
   alternative: "Good thinking. A cheaper option could save you real money.",
+  celebrate: "Fantastic choice! You've got the room for it — enjoy it.",
 };
 
 export default function OutcomePage() {

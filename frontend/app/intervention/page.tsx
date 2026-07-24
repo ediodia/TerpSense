@@ -19,6 +19,7 @@ export default function InterventionPage() {
   const {
     pendingPurchase,
     interventionResult,
+    decision,
     activeGoal,
     activeProfileId,
     spendingSummary,
@@ -45,14 +46,19 @@ export default function InterventionPage() {
   useEffect(() => {
     if (!pendingPurchase || !interventionResult) {
       router.replace('/purchase');
+    } else if (decision) {
+      // This exact purchase was already decided (e.g. the user hit the
+      // browser back button from /outcome) — don't let them re-submit and
+      // farm XP/streak twice for the same purchase.
+      router.replace('/outcome');
     }
-  }, [pendingPurchase, interventionResult, router]);
+  }, [pendingPurchase, interventionResult, decision, router]);
 
   useEffect(() => {
     if (chatScrollRef.current) chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
   }, [messages, isLoading]);
 
-  if (!pendingPurchase || !interventionResult) return null;
+  if (!pendingPurchase || !interventionResult || decision) return null;
 
   const analysis = interventionResult;
 
@@ -127,14 +133,15 @@ export default function InterventionPage() {
       if (data.updated_goal_amount != null) {
         setUpdatedGoalAmount(data.updated_goal_amount);
       }
+      // Setting decision here makes the guard effect above navigate to
+      // /outcome (via replace, not push) — deliberately not a separate
+      // router.push here, so the intervention entry can't be revisited.
       setDecision(decisionType);
       setDashboardNeedsRefresh(true);
-      router.push('/outcome');
     } catch (error) {
       console.error('Decision recording failed:', error);
       setDecision(decisionType);
       setDashboardNeedsRefresh(true);
-      router.push('/outcome');
     } finally {
       setIsSubmittingDecision(false);
     }
@@ -289,6 +296,21 @@ export default function InterventionPage() {
                     </button>
                   )}
                 </div>
+
+                {analysis.severity === 'green' && (
+                  <button
+                    onClick={() => handleDecision('celebrate')}
+                    disabled={isSubmittingDecision}
+                    className="relative overflow-hidden mt-2 w-full rounded-xl p-4 flex items-center gap-3 text-left border-2 border-amber-400/60 hover:border-amber-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-amber-500/10 via-yellow-500/10 to-amber-500/10 shadow-[0_0_24px_rgba(251,191,36,0.15)] hover:shadow-[0_0_34px_rgba(251,191,36,0.3)] group"
+                  >
+                    <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+                    <span className="relative z-10 w-9 h-9 rounded-full bg-amber-400/15 flex items-center justify-center text-lg group-hover:scale-110 transition-transform flex-shrink-0">🎉</span>
+                    <div className="relative z-10 flex-1">
+                      <span className="block text-sm font-black text-amber-300 tracking-tight uppercase">Fantastic Choice!</span>
+                      <span className="block text-[10px] text-amber-400/70">Celebrate this one — you've earned it</span>
+                    </div>
+                  </button>
+                )}
               </div>
             </div>
           </div>
