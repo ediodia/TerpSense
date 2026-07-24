@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Decision, Goal, InterventionResult, TransactionCategory } from "@/types";
+import type { Decision, Goal, InterventionResult, SpendingSummary, TransactionCategory } from "@/types";
 
 interface PendingPurchase {
   amount: number;
@@ -14,6 +14,7 @@ interface SessionState {
   updatedGoalAmount: number | null;
   activeGoal: Goal | null;
   activeProfileId: string;
+  spendingSummary: SpendingSummary | null;
   dashboardNeedsRefresh: boolean;
 
   setPendingPurchase: (purchase: PendingPurchase) => void;
@@ -22,6 +23,7 @@ interface SessionState {
   setUpdatedGoalAmount: (amount: number) => void;
   setActiveGoal: (goal: Goal) => void;
   setActiveProfileId: (profileId: string) => void;
+  setSpendingSummary: (summary: SpendingSummary) => void;
   setDashboardNeedsRefresh: (val: boolean) => void;
   resetSession: () => void;
 }
@@ -33,6 +35,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   updatedGoalAmount: null,
   activeGoal: null,
   activeProfileId: "alex",
+  spendingSummary: null,
   dashboardNeedsRefresh: false,
 
   setPendingPurchase: (purchase) => set({ pendingPurchase: purchase }),
@@ -41,6 +44,7 @@ export const useSessionStore = create<SessionState>((set) => ({
   setUpdatedGoalAmount: (amount) => set({ updatedGoalAmount: amount }),
   setActiveGoal: (goal) => set({ activeGoal: goal }),
   setActiveProfileId: (profileId) => set({ activeProfileId: profileId }),
+  setSpendingSummary: (summary) => set({ spendingSummary: summary }),
   setDashboardNeedsRefresh: (val) => set({ dashboardNeedsRefresh: val }),
   resetSession: () =>
     set({

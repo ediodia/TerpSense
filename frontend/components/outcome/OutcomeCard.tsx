@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import type { Decision, Goal, InterventionResult } from "@/types";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -12,6 +12,8 @@ interface OutcomeCardProps {
   activeGoal: Goal | null;
   updatedGoalAmount: number | null;
   confirmationMessage: string;
+  xpBefore: number;
+  xpAfter: number;
 }
 
 /* ---------------- REDIRECT: mega confetti burst ---------------- */
@@ -71,7 +73,10 @@ function DesertHourglassScene() {
   );
 
   return (
-    <div className="relative w-full h-56 overflow-hidden rounded-2xl bg-gradient-to-b from-amber-950/40 via-amber-900/20 to-amber-950/60 border border-amber-500/10">
+    <div
+      className="relative w-full h-56 overflow-hidden rounded-2xl bg-gradient-to-b from-amber-950/40 via-amber-900/20 to-amber-950/60 border border-amber-500/10"
+      style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
+    >
       <div
         className="absolute top-4 right-8 w-10 h-10 rounded-full bg-amber-400"
         style={{ animation: "sunPulse 2.5s ease-in-out infinite" }}
@@ -117,7 +122,10 @@ function DesertHourglassScene() {
 /* ---------------- ALTERNATIVE: spy scanning with magnifying glass ---------------- */
 function SpyScanner() {
   return (
-    <div className="relative w-full h-40 overflow-hidden rounded-2xl bg-purple-950/20 border border-purple-500/10">
+    <div
+      className="relative w-full h-40 overflow-hidden rounded-2xl bg-purple-950/20 border border-purple-500/10"
+      style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
+    >
       <div className="absolute inset-0 grid grid-cols-6 grid-rows-3 gap-1 p-3 opacity-40">
         {Array.from({ length: 18 }).map((_, i) => (
           <div key={i} className="bg-purple-500/20 rounded-sm" />
@@ -218,7 +226,7 @@ function ExitSignRunner() {
       {/* Hanging cable + sign fixture (the doorway the runner is bursting through) */}
       <div className="absolute top-14 left-[18%] flex flex-col items-center" style={{ animation: "cableSwing 4s ease-in-out infinite", transformOrigin: "top center" }}>
         <div className="w-0.5 h-6 bg-zinc-600" />
-        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 5s linear infinite" }}>
+        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 4.2s linear infinite" }}>
           <div className="bg-emerald-600 h-16 flex items-center justify-center px-2 relative overflow-hidden">
             <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 30px rgba(0,0,0,0.3)" }} />
             <div className="flex flex-col items-center gap-0.5 z-10">
@@ -243,7 +251,7 @@ function ExitSignRunner() {
       {/* Motion streaks trailing the runner */}
       <div
         className="absolute bottom-11 left-0 flex flex-col gap-1.5"
-        style={{ animation: "streakFade 3.4s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+        style={{ animation: "streakFade 4.2s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
         <span className="block w-8 h-0.5 bg-emerald-300/70 rounded-full" />
         <span className="block w-6 h-0.5 bg-emerald-300/45 rounded-full" />
@@ -253,7 +261,7 @@ function ExitSignRunner() {
       {/* Runner — already mid-stride at the doorway, then bolts for the train */}
       <div
         className="absolute bottom-6"
-        style={{ animation: "stationBurstDash 3.4s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+        style={{ animation: "stationBurstDash 4.2s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
         <div
           className="drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]"
@@ -279,20 +287,31 @@ function ExitSignRunner() {
   );
 }
 
-function XPBar({ xp }: { xp: number }) {
-  const [filled, setFilled] = useState(0);
-  const level = Math.floor(xp / 100) + 1;
-  const progress = xp % 100;
+function XPBar({ before, after }: { before: number; after: number }) {
+  const beforeLevel = Math.floor(before / 100) + 1;
+  const afterLevel = Math.floor(after / 100) + 1;
+  const leveledUp = afterLevel > beforeLevel;
+  const level = afterLevel;
+  const progress = after % 100;
+  const startProgress = leveledUp ? 0 : before % 100;
+
+  const [filled, setFilled] = useState(startProgress);
 
   useEffect(() => {
-    setTimeout(() => setFilled(progress), 300);
-  }, [progress]);
+    setFilled(startProgress);
+    const t = setTimeout(() => setFilled(progress), 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [before, after]);
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
       <div className="flex justify-between items-center mb-2">
         <span className="text-xs text-zinc-500 uppercase tracking-widest font-semibold">Financial IQ</span>
-        <span className="text-xs text-yellow-400 font-bold">Level {level}</span>
+        <span className="text-xs text-yellow-400 font-bold">
+          Level {level}
+          {leveledUp && <span className="ml-1.5 text-emerald-400">▲ Level up!</span>}
+        </span>
       </div>
       <div className="w-full bg-zinc-800 rounded-full h-3 overflow-hidden">
         <div
@@ -331,28 +350,22 @@ export function OutcomeCard({
   activeGoal,
   updatedGoalAmount,
   confirmationMessage,
+  xpBefore,
+  xpAfter,
 }: OutcomeCardProps) {
   const goalTarget = activeGoal?.target_amount ?? 1000;
   const newAmount = updatedGoalAmount ?? (activeGoal?.current_amount ?? 0);
   const newPercent = Math.round((newAmount / goalTarget) * 100);
   const oldPercent = activeGoal ? Math.round((activeGoal.current_amount / goalTarget) * 100) : 0;
   const [showConfetti, setShowConfetti] = useState(false);
-  const [xp, setXp] = useState(0);
-  const audioRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     if (decision === "redirect") {
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 3800);
-      setXp(75);
       playWinSound();
     } else if (decision === "alternative") {
-      setXp(75);
       playWinSound();
-    } else if (decision === "delay") {
-      setXp(40);
-    } else {
-      setXp(10);
     }
   }, [decision]);
 
@@ -413,7 +426,7 @@ export function OutcomeCard({
           </p>
         </div>
 
-        <XPBar xp={xp} />
+        <XPBar before={xpBefore} after={xpAfter} />
       </div>
     );
   }
@@ -429,7 +442,7 @@ export function OutcomeCard({
           <p className="text-sm text-zinc-300">{formatCurrency(purchaseAmount)} purchase — check back in 7 days.</p>
           <p className="text-xs text-zinc-500 mt-1">If you still want it then, it was probably worth it.</p>
         </div>
-        <XPBar xp={xp} />
+        <XPBar before={xpBefore} after={xpAfter} />
       </div>
     );
   }
@@ -447,7 +460,7 @@ export function OutcomeCard({
             <p className="text-sm text-zinc-300 leading-relaxed">{result.alternative_suggestion}</p>
           </div>
         )}
-        <XPBar xp={xp} />
+        <XPBar before={xpBefore} after={xpAfter} />
       </div>
     );
   }
@@ -463,7 +476,7 @@ export function OutcomeCard({
           TerpSense isn't here to stop you — just to make sure you know the full picture before you decide.
         </p>
       </div>
-      <XPBar xp={xp} />
+      <XPBar before={xpBefore} after={xpAfter} />
     </div>
   );
 }

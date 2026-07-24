@@ -8,7 +8,7 @@ export type TransactionCategory =
   | "Shopping"
   | "Other";
 
-export type Severity = "yellow" | "orange" | "red";
+export type Severity = "green" | "yellow" | "orange" | "red";
 
 export type Decision = "proceed" | "delay" | "redirect" | "alternative";
 

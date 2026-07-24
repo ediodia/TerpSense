@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { OutcomeCard } from "@/components/outcome/OutcomeCard";
 import { useSessionStore } from "@/store/sessionStore";
+import { addXP } from "@/lib/xp";
 
 const CONFIRMATION_MESSAGES: Record<string, string> = {
   redirect: "Smart move. Your savings goal just got closer.",
@@ -19,9 +20,13 @@ export default function OutcomePage() {
     interventionResult,
     pendingPurchase,
     activeGoal,
+    activeProfileId,
     updatedGoalAmount,
     resetSession,
   } = useSessionStore();
+
+  const [xpRange, setXpRange] = useState<{ before: number; after: number } | null>(null);
+  const xpAppliedRef = useRef(false);
 
   useEffect(() => {
     if (!decision || !interventionResult || !pendingPurchase) {
@@ -29,7 +34,17 @@ export default function OutcomePage() {
     }
   }, [decision, interventionResult, pendingPurchase, router]);
 
-  if (!decision || !interventionResult || !pendingPurchase) return null;
+  useEffect(() => {
+    // Guards against React StrictMode's dev-only double-invoke, which would
+    // otherwise award XP for the same decision twice.
+    if (decision && !xpAppliedRef.current) {
+      xpAppliedRef.current = true;
+      setXpRange(addXP(activeProfileId, decision));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [decision]);
+
+  if (!decision || !interventionResult || !pendingPurchase || !xpRange) return null;
 
   function handleBackToDashboard() {
     resetSession();
@@ -73,6 +88,8 @@ export default function OutcomePage() {
               activeGoal={activeGoal}
               updatedGoalAmount={updatedGoalAmount}
               confirmationMessage={safeMessage}
+              xpBefore={xpRange.before}
+              xpAfter={xpRange.after}
             />
           </div>
         </div>

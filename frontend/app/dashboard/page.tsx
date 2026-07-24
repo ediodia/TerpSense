@@ -16,18 +16,12 @@ import { TerpSenseLogo } from "@/components/dashboard/TerpSenseLogo";
 import { SpendingGauge } from "@/components/dashboard/SpendingGauge";
 import { XPBadge } from "@/components/dashboard/XPBadge";
 import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
+import { StreakBadge } from "@/components/dashboard/StreakBadge";
+import { ProtectedBadge } from "@/components/dashboard/ProtectedBadge";
 import { useSessionStore } from "@/store/sessionStore";
-
-const CATEGORY_ICONS: Record<string, string> = {
-  Clothing: "👕",
-  Food: "🍔",
-  Dining: "🍔",
-  Entertainment: "🎬",
-  Transport: "🚗",
-  Subscriptions: "📱",
-  Health: "💊",
-  Shopping: "🛍️",
-};
+import { useLoginStreak } from "@/lib/streak";
+import { getXP } from "@/lib/xp";
+import { CATEGORY_ICONS, BIWEEKLY_BUDGET } from "@/lib/constants";
 
 const MOTIVATIONAL_MESSAGES = [
   "Your future self will thank you. 💪",
@@ -53,9 +47,13 @@ export default function DashboardPage() {
     resetSession,
     activeProfileId,
     setActiveProfileId,
+    setSpendingSummary,
     dashboardNeedsRefresh,
     setDashboardNeedsRefresh,
   } = useSessionStore();
+
+  const { streak, justIncremented } = useLoginStreak(activeProfileId);
+  const [xp, setXp] = useState(0);
 
   async function loadData(profileId = activeProfileId) {
     try {
@@ -67,9 +65,11 @@ export default function DashboardPage() {
         getProfiles(),
       ]);
       setSummary(s);
+      setSpendingSummary(s);
       setGoals(g);
       setTransactions(t);
       setProfiles(p);
+      setXp(getXP(profileId));
       if (g.length > 0) setActiveGoal(g[0]);
     } catch {
       setError("Could not connect to TerpSense backend. Is the server running?");
@@ -144,10 +144,10 @@ export default function DashboardPage() {
   const biggestRiskCategory = biggestRisk?.[0];
   const biggestRiskAvg = biggestRiskCategory ? summary?.category_weekly_averages[biggestRiskCategory] ?? 0 : 0;
   const overByPercent = biggestRiskAvg > 0 ? Math.round((((biggestRisk?.[1] ?? 0) - biggestRiskAvg) / biggestRiskAvg) * 100) : 0;
-  const totalProtected = 284;
+  const totalSpent = summary ? Object.values(summary.week).reduce((a, b) => a + b, 0) : 0;
+  const biweeklyBudget = BIWEEKLY_BUDGET;
+  const totalProtected = Math.max(0, biweeklyBudget - totalSpent);
   const futureValue = Math.round(totalProtected * Math.pow(1.1, 10));
-  const totalSpent = summary ? Object.values(summary.week).reduce((a, b) => a + b, 0) : 209;
-  const biweeklyBudget = 800;
 
   return (
     <main className="min-h-screen bg-transparent text-zinc-100 p-4 sm:p-6 lg:p-8 font-sans selection:bg-emerald-500/30">
@@ -195,16 +195,8 @@ export default function DashboardPage() {
               <SpendingGauge spent={totalSpent} budget={biweeklyBudget} />
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4 flex-1">
-                  <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl backdrop-blur-xl">
-                    <p className="text-3xl font-black text-emerald-400 tracking-tighter">🔥 3</p>
-                    <p className="text-xs font-bold text-zinc-500 mt-1 uppercase tracking-widest">Streak</p>
-                  </div>
-                  <div className="bg-zinc-900/40 border border-white/5 rounded-3xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl backdrop-blur-xl">
-                    <p className="text-2xl font-black text-white tracking-tighter">
-                      $<AnimatedNumber value={totalProtected} />
-                    </p>
-                    <p className="text-xs font-bold text-zinc-500 mt-1 uppercase tracking-widest">Saved</p>
-                  </div>
+                  <StreakBadge streak={streak} justIncremented={justIncremented} />
+                  <ProtectedBadge amount={totalProtected} />
                   <div className="col-span-2 bg-zinc-900/40 border border-white/5 rounded-3xl p-4 flex items-center justify-between relative overflow-hidden shadow-2xl backdrop-blur-xl">
                     <div>
                       <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-1">10 Year Projection</p>
@@ -243,7 +235,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <XPBadge xp={75} />
+            <XPBadge xp={xp} />
           </div>
 
           <div className="lg:col-span-4 flex flex-col gap-4">

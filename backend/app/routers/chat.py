@@ -51,11 +51,12 @@ def _build_chat_system(ctx: ChatContext) -> str:
         "red": "high-risk — this purchase significantly conflicts with the user's goals",
         "orange": "moderate-risk — worth pausing to reconsider",
         "yellow": "low-risk — minor concern",
+        "green": "minimal-risk — the user is in good shape on this one",
     }.get(ctx.severity or "yellow", "")
 
     # 2. Re-formatted carefully to keep the data insertion clean
     return (
-        f"You are TerpSense, a warm and emotionally intelligent financial coach. "
+        f"You are Kaizen, TerpSense's warm and emotionally intelligent financial coach. "
         f"You genuinely care about the person you're talking to — not just their money, but their wellbeing.\n\n"
         f"Current purchase context (reference when relevant):\n"
         f"- Item: {merchant} (${amount:.2f} in {ctx.category or 'Uncategorized'})\n"

@@ -220,15 +220,17 @@ input[type="number"] {
 }
 
 /* --- Proceed: Tokyo platform sprint scene --- */
-/* Runner is already mid-stride at the exit sign, holds a beat, then bolts
-   across the platform toward the train and loops back invisibly. */
+/* Staged narrative on a 4.2s loop: the sign holds and flickers alone for the
+   first ~1s (0-22%), then the runner bolts across the platform toward the
+   train, then it fades and the whole thing replays. */
 @keyframes stationBurstDash {
   0%   { left: 6%;   opacity: 1; transform: scale(1)     rotate(-5deg); }
-  6%   { left: 6%;   opacity: 1; transform: scale(1.05)  rotate(-5deg); }
-  11%  { left: 13%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
-  55%  { left: 60%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
-  86%  { left: 110%; opacity: 1; transform: scale(1)     rotate(-9deg); }
-  90%  { left: 110%; opacity: 0; transform: scale(1)     rotate(-9deg); }
+  4%   { left: 6%;   opacity: 1; transform: scale(1.05)  rotate(-5deg); }
+  10%  { left: 6%;   opacity: 1; transform: scale(1)     rotate(-5deg); }
+  22%  { left: 13%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
+  60%  { left: 60%;  opacity: 1; transform: scale(1)     rotate(-9deg); }
+  88%  { left: 110%; opacity: 1; transform: scale(1)     rotate(-9deg); }
+  92%  { left: 110%; opacity: 0; transform: scale(1)     rotate(-9deg); }
   100% { left: 6%;   opacity: 1; transform: scale(1)     rotate(-5deg); }
 }
 @keyframes runnerBob {
@@ -246,14 +248,21 @@ input[type="number"] {
   100%      { opacity: 0; }
 }
 @keyframes streakFade {
-  0%, 11%  { opacity: 0; transform: translateX(0); }
-  20%      { opacity: 1; transform: translateX(-4px); }
-  80%      { opacity: 1; transform: translateX(-4px); }
+  0%, 22%  { opacity: 0; transform: translateX(0); }
+  30%      { opacity: 1; transform: translateX(-4px); }
+  84%      { opacity: 1; transform: translateX(-4px); }
   90%, 100% { opacity: 0; transform: translateX(0); }
 }
+/* Synced to stationBurstDash's 4.2s loop — the sign flickers through the
+   hold beat (0-22%), then stays lit steady while the runner sprints. */
 @keyframes signFlicker {
-  0%, 4%, 8%, 100% { opacity: 1; }
-  6% { opacity: 0.6; }
+  0%, 100% { opacity: 1; }
+  3%  { opacity: 0.55; }
+  6%  { opacity: 1; }
+  9%  { opacity: 0.65; }
+  13% { opacity: 1; }
+  18% { opacity: 0.8; }
+  22% { opacity: 1; }
 }
 @keyframes cableSwing {
   0%, 100% { transform: rotate(-1.5deg); }

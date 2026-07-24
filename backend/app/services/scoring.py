@@ -12,7 +12,7 @@ DISCRETIONARY_CATEGORIES = {"Clothing", "Entertainment", "Shopping", "Subscripti
 
 @dataclass
 class ScoreResult:
-    severity: str           # "yellow" | "orange" | "red"
+    severity: str           # "green" | "yellow" | "orange" | "red"
     score: int              # 0–100 composite
     goal_impact_days: int
     redirect_value_6mo: float
@@ -122,9 +122,13 @@ def compute_severity(
         strong_signals += 1
 
     if category in ESSENTIAL_CATEGORIES:
-        severity = "yellow"
+        # Essentials aren't a spending concern by default — a real "you're good" case
+        severity = "green"
     elif purchase_amount < 5:
-        severity = "yellow"
+        severity = "green"
+    elif score < 15:
+        # Genuinely low-signal purchase — nothing here is off pace
+        severity = "green"
     elif purchase_amount < 15:
         severity = "yellow" if score < 70 else "orange"
     elif score >= 65 and strong_signals >= 2:

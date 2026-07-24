@@ -21,7 +21,7 @@ export function cn(...classes: (string | undefined | false | null)[]): string {
 }
 
 // --- Shared design tokens ---
-export type Severity = "yellow" | "orange" | "red";
+export type Severity = "green" | "yellow" | "orange" | "red";
 
 export type SeverityConfig = {
   label: string;
@@ -34,6 +34,15 @@ export type SeverityConfig = {
 };
 
 export const SEVERITY_TOKENS: Record<Severity, SeverityConfig> = {
+  green: {
+    label: "You're Good",
+    text: "text-emerald-400",
+    border: "border-emerald-500/30",
+    bg: "bg-emerald-500/10",
+    dot: "bg-emerald-500",
+    glow: "shadow-[0_0_40px_rgba(16,185,129,0.12)]",
+    gradient: "from-emerald-500/5",
+  },
   yellow: {
     label: "Heads Up",
     text: "text-yellow-400",

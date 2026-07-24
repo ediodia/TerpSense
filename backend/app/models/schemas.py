@@ -73,7 +73,7 @@ class GoalsResponse(BaseModel):
 
 
 class InterventionResponse(BaseModel):
-    severity: Literal["yellow", "orange", "red"]
+    severity: Literal["green", "yellow", "orange", "red"]
     insights: List[str]
     goal_impact_days: int
     redirect_value_6mo: float

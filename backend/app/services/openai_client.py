@@ -32,7 +32,7 @@ def _get_client() -> Optional[AzureOpenAI]:
 
 
 def build_system_prompt() -> str:
-    return """You are TerpSense, a financial intervention AI assistant.
+    return """You are Kaizen, TerpSense's financial intervention AI assistant.
 
 Your job: when a user is about to make a purchase, analyze their full spending context and return a grounded, specific intervention.
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { CATEGORY_ICONS } from "@/lib/constants";
 import type { TransactionCategory } from "@/types";
 
 const CATEGORIES: TransactionCategory[] = [
@@ -15,16 +16,29 @@ const CATEGORIES: TransactionCategory[] = [
   "Other",
 ];
 
+const QUICK_AMOUNTS = [10, 25, 50, 100];
+
 interface PurchaseFormProps {
   onSubmit: (amount: number, category: TransactionCategory, merchant?: string) => void;
   isLoading: boolean;
+  onChange?: (amount: string, category: TransactionCategory) => void;
 }
 
-export function PurchaseForm({ onSubmit, isLoading }: PurchaseFormProps) {
+export function PurchaseForm({ onSubmit, isLoading, onChange }: PurchaseFormProps) {
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState<TransactionCategory>("Clothing");
   const [merchant, setMerchant] = useState("");
   const [error, setError] = useState("");
+
+  function updateAmount(next: string) {
+    setAmount(next);
+    onChange?.(next, category);
+  }
+
+  function updateCategory(next: TransactionCategory) {
+    setCategory(next);
+    onChange?.(amount, next);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -53,9 +67,25 @@ export function PurchaseForm({ onSubmit, isLoading }: PurchaseFormProps) {
             min="0.01"
             placeholder="0.00"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => updateAmount(e.target.value)}
             className="w-full bg-zinc-800 border border-zinc-700 rounded-xl pl-8 pr-4 py-3.5 text-zinc-100 text-lg font-medium placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all"
           />
+        </div>
+        <div className="flex gap-2 mt-2.5">
+          {QUICK_AMOUNTS.map((quick) => (
+            <button
+              key={quick}
+              type="button"
+              onClick={() => updateAmount(String(quick))}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                amount === String(quick)
+                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/40"
+                  : "bg-zinc-800/60 text-zinc-400 border border-zinc-700 hover:text-zinc-200 hover:border-zinc-600"
+              }`}
+            >
+              ${quick}
+            </button>
+          ))}
         </div>
         {error && <p className="text-red-400 text-sm mt-1.5">{error}</p>}
       </div>
@@ -64,17 +94,23 @@ export function PurchaseForm({ onSubmit, isLoading }: PurchaseFormProps) {
         <label className="block text-xs font-semibold uppercase tracking-widest text-zinc-500 mb-2">
           Category
         </label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as TransactionCategory)}
-          className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3.5 text-zinc-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all appearance-none cursor-pointer"
-        >
+        <div className="grid grid-cols-4 gap-2">
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
+            <button
+              key={c}
+              type="button"
+              onClick={() => updateCategory(c)}
+              className={`flex flex-col items-center justify-center gap-1 py-3 rounded-xl border transition-all cursor-pointer ${
+                category === c
+                  ? "bg-emerald-500/10 border-emerald-500/50 text-emerald-400"
+                  : "bg-zinc-800/60 border-zinc-700 text-zinc-400 hover:text-zinc-200 hover:border-zinc-600"
+              }`}
+            >
+              <span className="text-lg leading-none">{CATEGORY_ICONS[c] ?? "💳"}</span>
+              <span className="text-[9px] font-semibold uppercase tracking-wide leading-none">{c}</span>
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       <div>

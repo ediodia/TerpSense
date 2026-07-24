@@ -5,6 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useSessionStore } from '@/store/sessionStore';
 import { recordDecision } from '@/lib/api';
 import { formatCurrency, pluralize, SEVERITY_TOKENS } from '@/lib/utils';
+import { AnimatedNumber } from '@/components/dashboard/AnimatedNumber';
+import { ProtectedAmount } from '@/components/dashboard/ProtectedBadge';
+import { KaizenLogo } from '@/components/intervention/KaizenLogo';
+import { useLoginStreak } from '@/lib/streak';
+import { BIWEEKLY_BUDGET } from '@/lib/constants';
 import type { Decision } from '@/types';
 
 export default function InterventionPage() {
@@ -16,13 +21,20 @@ export default function InterventionPage() {
     interventionResult,
     activeGoal,
     activeProfileId,
+    spendingSummary,
     setDecision,
     setUpdatedGoalAmount,
     setDashboardNeedsRefresh,
   } = useSessionStore();
 
+  const { streak } = useLoginStreak(activeProfileId);
+  const totalSpentThisWeek = spendingSummary
+    ? Object.values(spendingSummary.week).reduce((a, b) => a + b, 0)
+    : 0;
+  const totalProtected = Math.max(0, BIWEEKLY_BUDGET - totalSpentThisWeek);
+
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'I flagged this transaction based on your current trajectory. Ask me anything like can I afford this or what is the alternative.' },
+    { role: 'assistant', content: "I flagged this transaction based on your current trajectory. Ask me anything like can I afford this or what is the alternative." },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -104,7 +116,7 @@ export default function InterventionPage() {
     setIsSubmittingDecision(true);
     try {
       const data = await recordDecision({
-        user_id: pendingPurchase!.user_id ?? 'demo',
+        user_id: 'demo',
         purchase_amount: pendingPurchase!.amount,
         category: pendingPurchase!.category,
         merchant: pendingPurchase!.merchant,
@@ -246,22 +258,36 @@ export default function InterventionPage() {
                     <span className="block text-[9px] text-zinc-500">Find a better deal</span>
                   </button>
 
-                  <button
-                    onClick={() => handleDecision('proceed')}
-                    disabled={isSubmittingDecision}
-                    className="relative bg-[#050806] border-2 border-emerald-500/70 hover:border-emerald-400 transition-all rounded-xl p-3 text-left flex flex-col gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_0_18px_rgba(16,185,129,0.15)] hover:shadow-[0_0_26px_rgba(16,185,129,0.3)] group"
-                  >
-                    <span className="absolute inset-0 bg-emerald-500/5 animate-pulse pointer-events-none" />
-                    <div className="relative z-10 flex items-center justify-between">
-                      <span className="text-[8px] font-black text-emerald-400 tracking-[0.2em]">非常口</span>
-                      <span className="text-[8px] font-black text-emerald-400 tracking-widest">EXIT</span>
-                    </div>
-                    <div className="relative z-10 flex items-center gap-2">
-                      <span className="text-base group-hover:translate-x-0.5 transition-transform">🏃‍♂️</span>
-                      <span className="block text-xs font-black text-emerald-400 tracking-tight uppercase">Proceed Anyway</span>
-                    </div>
-                    <span className="relative z-10 block text-[9px] text-emerald-500/60">I have considered this</span>
-                  </button>
+                  {analysis.severity === 'green' ? (
+                    <button
+                      onClick={() => handleDecision('proceed')}
+                      disabled={isSubmittingDecision}
+                      className="relative bg-[#050806] border-2 border-emerald-500/70 hover:border-emerald-400 transition-all rounded-xl p-3 text-left flex flex-col gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_0_18px_rgba(16,185,129,0.15)] hover:shadow-[0_0_26px_rgba(16,185,129,0.3)] group"
+                    >
+                      <div className="relative z-10 flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform text-sm">✅</span>
+                        <span className="block text-xs font-black text-emerald-400 tracking-tight uppercase">Go For It</span>
+                      </div>
+                      <span className="relative z-10 block text-[9px] text-emerald-500/60">You've got room for this</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleDecision('proceed')}
+                      disabled={isSubmittingDecision}
+                      className="relative bg-[#050806] border-2 border-emerald-500/70 hover:border-emerald-400 transition-all rounded-xl p-3 text-left flex flex-col gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-[0_0_18px_rgba(16,185,129,0.15)] hover:shadow-[0_0_26px_rgba(16,185,129,0.3)] group"
+                    >
+                      <span className="absolute inset-0 bg-emerald-500/5 animate-pulse pointer-events-none" />
+                      <div className="relative z-10 flex items-center justify-between">
+                        <span className="text-[8px] font-black text-emerald-400 tracking-[0.2em]">非常口</span>
+                        <span className="text-[8px] font-black text-emerald-400 tracking-widest">EXIT</span>
+                      </div>
+                      <div className="relative z-10 flex items-center gap-2">
+                        <span className="text-base group-hover:translate-x-0.5 transition-transform">🏃‍♂️</span>
+                        <span className="block text-xs font-black text-emerald-400 tracking-tight uppercase">Proceed Anyway</span>
+                      </div>
+                      <span className="relative z-10 block text-[9px] text-emerald-500/60">I have considered this</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -281,10 +307,10 @@ export default function InterventionPage() {
             <div className="bg-zinc-900/30 border border-yellow-500/10 rounded-3xl p-4 flex flex-col justify-center relative overflow-hidden">
               <div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/10 blur-2xl rounded-full pointer-events-none" />
               <p className="text-lg font-black text-white tracking-tight mb-1 relative z-10">
-                <span className="text-yellow-500">3</span> Active Streak
+                <span className="text-yellow-500">🔥 <AnimatedNumber value={streak} /></span> Active Streak
               </p>
               <p className="text-[11px] text-zinc-400 font-medium relative z-10">
-                <span className="text-emerald-400 font-bold">{formatCurrency(284)}</span> protected from impulse spending this week
+                <ProtectedAmount amount={totalProtected} className="text-emerald-400 font-bold" /> protected from impulse spending this week
               </p>
             </div>
           </div>
@@ -314,17 +340,19 @@ export default function InterventionPage() {
           <div className="flex-1 min-h-0 bg-zinc-900/30 border border-white/5 rounded-3xl flex flex-col overflow-hidden">
             <div className="p-4 border-b border-white/5 flex-shrink-0 bg-zinc-900/50">
               <h2 className="text-[11px] font-bold text-white flex items-center gap-2">
-                <span className="w-4 h-4 rounded bg-zinc-800 flex items-center justify-center text-[9px]">T</span>
-                TerpSense Copilot <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[8px]">AI</span>
+                <KaizenLogo size={18} className="rounded" />
+                Kaizen <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[8px]">AI</span>
               </h2>
             </div>
 
             <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-5 custom-scrollbar space-y-4 min-h-0">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                  <div className={`w-6 h-6 rounded flex items-center justify-center flex-shrink-0 text-[9px] font-bold ${msg.role === 'user' ? 'bg-zinc-800 text-white' : 'border border-white/10 text-zinc-400'}`}>
-                    {msg.role === 'user' ? 'U' : 'T'}
-                  </div>
+                  {msg.role === 'user' ? (
+                    <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0 text-[9px] font-bold bg-zinc-800 text-white">U</div>
+                  ) : (
+                    <KaizenLogo size={24} className="rounded flex-shrink-0" />
+                  )}
                   <div className={`pt-0.5 text-[11px] font-medium leading-relaxed max-w-[85%] ${msg.role === 'user' ? 'text-zinc-100 text-right' : 'text-zinc-300'}`}>
                     {msg.content}
                   </div>
@@ -332,7 +360,7 @@ export default function InterventionPage() {
               ))}
               {isLoading && (
                 <div className="flex gap-2.5">
-                  <div className="w-6 h-6 rounded border border-white/10 flex items-center justify-center flex-shrink-0 text-[9px] font-bold text-zinc-400">T</div>
+                  <KaizenLogo size={24} className="rounded flex-shrink-0" />
                   <div className="pt-0.5 text-[11px] text-zinc-500 font-medium">Analyzing...</div>
                 </div>
               )}
