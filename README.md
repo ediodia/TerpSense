@@ -53,7 +53,7 @@ Young adults do not struggle with money because they lack charts or dashboards. 
 
 ## Project Structure
 
-\```text
+```text
 terpsense/
 ├── backend/
 │   ├── app/
@@ -69,7 +69,7 @@ terpsense/
     ├── lib/
     ├── store/
     └── types/
-\```
+```
 
 ---
 
@@ -79,25 +79,25 @@ terpsense/
 
 **macOS / Linux (bash):**
 
-\```bash
+```bash
 cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 touch .env   # then fill in the values below
 uvicorn app.main:app --reload --port 8000
-\```
+```
 
 **Windows (PowerShell):**
 
-\```powershell
+```powershell
 cd backend
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 New-Item .env   # then fill in the values below
 uvicorn app.main:app --reload --port 8000
-\```
+```
 
 > Note: this repo does not currently ship a `.env.example`, create `.env` directly and fill in the variables from the section below.
 
@@ -105,21 +105,21 @@ uvicorn app.main:app --reload --port 8000
 
 **macOS / Linux (bash):**
 
-\```bash
+```bash
 cd frontend
 npm install
 touch .env.local   # then fill in the values below
 npm run dev
-\```
+```
 
 **Windows (PowerShell):**
 
-\```powershell
+```powershell
 cd frontend
 npm install
 New-Item .env.local   # then fill in the values below
 npm run dev
-\```
+```
 
 Open [http://localhost:3000](http://localhost:3000).
 
@@ -129,22 +129,22 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Backend (`backend/.env`)
 
-\```text
+```text
 AZURE_OPENAI_KEY=your_key
 AZURE_OPENAI_ENDPOINT=https://your_resource.openai.azure.com/
 AZURE_OPENAI_DEPLOYMENT=gpt-5.4-mini
 AZURE_OPENAI_API_VERSION=2024-12-01-preview
 NESSIE_API_KEY=your_nessie_key
 USE_MOCK_DATA=true
-\```
+```
 
 > Deployment names and API versions are tied to whatever model you deploy in the Azure Portal, if you deploy a different model, update `AZURE_OPENAI_DEPLOYMENT` and `AZURE_OPENAI_API_VERSION` to match the values shown on that deployment's "Get Started" page.
 
 ### Frontend (`frontend/.env.local`)
 
-\```text
+```text
 NEXT_PUBLIC_API_URL=http://localhost:8000
-\```
+```
 
 Set `USE_MOCK_DATA=true` to use local JSON fixtures instead of the live Nessie API. Recommended for demos.
 
