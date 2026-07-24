@@ -4,9 +4,21 @@
 
 > "We don't track your money. We change your behavior."
 
-TerpSense intercepts purchase decisions *before* they happen. When you are about to buy something, it analyzes your spending history, savings goals, and behavioral patterns, then intervenes with personalized, number grounded insights, better alternatives, and an interactive chatbot that helps users ask follow up questions before deciding.
+TerpSense intercepts purchase decisions *before* they happen. When you are about to buy something, it analyzes your spending history, savings goals, and behavioral patterns, then intervenes with personalized, number grounded insights, better alternatives, and **Kaizen** — an interactive AI copilot that helps users ask follow up questions before deciding.
 
 Built for **Bitcamp 2026** using Capital One Nessie mock data, Azure OpenAI, and **LangGraph** for the AI agent workflow.
+
+**Live demo:** [terp-sense.vercel.app](https://terp-sense.vercel.app)
+
+---
+
+## Highlights
+
+- **Four-tier severity system** — not just "risky": a genuinely low-risk purchase now surfaces a green **"Fantastic Choice!"** state with its own 5th, celebratory decision option, instead of every purchase reading as some flavor of a warning
+- **Three distinct demo personas** (Alex, Jordan, Sam), each with real, independent transactions, spending patterns, and savings goals — switching profiles actually changes the data, not just the name on the header
+- **Kaizen**, the in-app AI copilot, with its own logo and persona, answering follow-up questions grounded in the same real numbers as the analysis
+- **Gamification** — streaks, cumulative XP with levels, and a first-visit guided tour, all backed by real per-profile state instead of static numbers
+- **A five-scene animated outcome sequence** — one signature mini-animation per decision, including a three-act cutscene for "proceed" (exit pictogram → sprint through Shibuya station → catching the train → riding past a scrolling Tokyo skyline)
 
 ---
 
@@ -18,12 +30,12 @@ Young adults do not struggle with money because they lack charts or dashboards. 
 
 ## Demo Flow
 
-1. **Dashboard**: View your spending summary, savings goal, and recent transactions
+1. **Dashboard**: View your spending summary, savings goal, streak, and recent transactions — switch between three demo profiles to see how the same purchase reads differently for different spending habits
 2. **Check a Purchase**: Enter an amount, category, and merchant
-3. **Intervention**: The LangGraph powered AI agent analyzes the purchase against your patterns and goal
-4. **Ask TerpSense**: Use the chatbot on the intervention page to ask follow up questions like "Can I afford this?", "What should I do instead?", or "Help me save"
-5. **Decide**: Redirect to savings, delay, find an alternative, or proceed anyway
-6. **Outcome**: See your goal update in real time if you redirect
+3. **Intervention**: The LangGraph powered AI agent analyzes the purchase against your patterns and goal, landing on one of four severity tiers (green/yellow/orange/red)
+4. **Ask Kaizen**: Use the copilot on the intervention page to ask follow up questions like "Can I afford this?", "What should I do instead?", or "Help me save"
+5. **Decide**: Redirect to savings, delay, find an alternative, proceed anyway — or, for a green-tier "Fantastic Choice!" purchase, a 5th celebratory option
+6. **Outcome**: Watch a decision-specific animated scene play out, and see your goal update in real time if you redirect
 
 ---
 
@@ -143,13 +155,17 @@ Set `USE_MOCK_DATA=true` to use local JSON fixtures instead of the live Nessie A
 | Method | Route | Description |
 |---|---|---|
 | GET | `/health` | Health check |
-| GET | `/transactions` | Fetch recent transactions |
-| GET | `/spending-summary` | Aggregated category spending |
-| GET | `/goals` | Active savings goals |
+| GET | `/profiles` | List the demo profiles (Alex, Jordan, Sam) |
+| GET | `/transactions` | Fetch recent transactions for a profile |
+| GET | `/spending-summary` | Aggregated category spending for a profile |
+| GET | `/goals` | Active savings goals for a profile |
+| POST | `/update-goal` | Manually add a contribution to a goal |
 | POST | `/analyze-purchase` | Run AI intervention analysis |
 | POST | `/record-decision` | Log user decision, update goal |
 | POST | `/reset-demo` | Reset session state for demo |
-| POST | `/chat-purchase` | Chat with TerpSense about the current purchase decision |
+| POST | `/api/chat` | Chat with Kaizen about the current purchase decision |
+
+All of `/transactions`, `/spending-summary`, `/goals`, and `/analyze-purchase` accept a `profile_id` query/body param (`alex`, `jordan`, or `sam`) — each profile is backed by its own mock data, not a shared fixture.
 
 ---
 
@@ -157,7 +173,7 @@ Set `USE_MOCK_DATA=true` to use local JSON fixtures instead of the live Nessie A
 
 The backend computes all numbers deterministically:
 
-- **Severity score**: based on category overspend, purchase frequency, and goal conflict
+- **Severity**: a composite score from category overspend, purchase frequency, goal conflict, purchase size, and monthly trend, bucketed into four tiers — `green` ("Fantastic Choice!" — essentials, sub-$5 purchases, or a genuinely low-signal score), `yellow`, `orange`, and `red` (gated behind multiple strong signals, not a single high factor)
 - **Goal impact days**: $Purchase\_Amount \times (\frac{Days\_Remaining}{Remaining\_To\_Goal})$
 - **Redirect value**: simple 5% APY approximation over 6 months
 
@@ -175,7 +191,7 @@ Azure OpenAI only generates natural language and agent recommendations:
 - `alternative_suggestion`: cheaper option for discretionary categories
 - `summary_line`: one sentence summary
 
-The intervention page also includes an interactive chatbot powered by the same AI workflow. After the initial analysis, users can ask follow up questions about the purchase, such as whether they can afford it, what a better option would be, or how the decision affects their financial goals. This makes the experience more conversational and action oriented instead of stopping at a static recommendation.
+The intervention page also includes Kaizen, an interactive copilot powered by the same AI workflow. After the initial analysis, users can ask follow up questions about the purchase, such as whether they can afford it, what a better option would be, or how the decision affects their financial goals. This makes the experience more conversational and action oriented instead of stopping at a static recommendation.
 
 A hardcoded contextual fallback runs if the AI call fails, so the demo never breaks.
 
@@ -189,8 +205,10 @@ A hardcoded contextual fallback runs if the AI call fails, so the demo never bre
 | Category | Clothing |
 | Clothing spend this week | $143 (already) |
 | Savings goal | Emergency Fund: $430/$1000 |
-| Result | Severity: red, delays goal 29 days |
+| Result | Severity: orange, delays goal 29 days |
 | Best choice | Redirect: goal bar animates to $519 |
+
+This is the Alex Chen profile (`profile_id=alex`) — try the same purchase amount against Jordan or Sam and the insights, severity, and goal all come back different, since each profile has its own real data.
 
 ---
 
@@ -198,15 +216,5 @@ A hardcoded contextual fallback runs if the AI call fails, so the demo never bre
 
 **Founders:**
 
-<<<<<<< HEAD
 - Frontend and Infra Engineer: Ediale Odia
 - Backend and AI Engineer: Aman Bollam
-=======
-Lead Dev and AI Engineer: Aman Bollam
-
-Frontend and AI Engineer: Ediale Odia
-
-##
-
-Product Designer and Backend Engineer: Jared Josue
->>>>>>> upstream/main
