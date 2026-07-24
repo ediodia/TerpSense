@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 export interface TourStep {
   target: string; // matches a data-tour="..." attribute
@@ -20,6 +20,9 @@ interface Rect {
   height: number;
 }
 
+const TOOLTIP_WIDTH = 300;
+const VIEWPORT_MARGIN = 16;
+
 function measure(selector: string): Rect | null {
   const el = document.querySelector(`[data-tour="${selector}"]`);
   if (!el) return null;
@@ -31,6 +34,8 @@ function measure(selector: string): Rect | null {
 export function OnboardingTour({ steps, onDone }: OnboardingTourProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const [rect, setRect] = useState<Rect | null>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [tooltipHeight, setTooltipHeight] = useState(200);
 
   const step = steps[stepIndex];
   const isLast = stepIndex === steps.length - 1;
@@ -53,6 +58,15 @@ export function OnboardingTour({ steps, onDone }: OnboardingTourProps) {
     };
   }, [step.target]);
 
+  // Measure the tooltip's own rendered height so positioning can be clamped
+  // to the viewport — a tall spotlighted target (e.g. the activity panel)
+  // would otherwise push the card, with its Next/Skip buttons, off-screen.
+  useLayoutEffect(() => {
+    if (tooltipRef.current) {
+      setTooltipHeight(tooltipRef.current.getBoundingClientRect().height);
+    }
+  }, [stepIndex, rect]);
+
   function next() {
     if (isLast) {
       onDone();
@@ -66,7 +80,26 @@ export function OnboardingTour({ steps, onDone }: OnboardingTourProps) {
   }
 
   const pad = 8;
-  const tooltipBelow = rect ? rect.top < window.innerHeight * 0.55 : true;
+
+  function tooltipStyle(): React.CSSProperties {
+    if (!rect) {
+      return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
+    }
+
+    const spaceBelow = window.innerHeight - (rect.top + rect.height + pad + 12);
+    const spaceAbove = rect.top - pad - 12;
+    const placeBelow = spaceBelow >= tooltipHeight || spaceBelow >= spaceAbove;
+
+    let top = placeBelow ? rect.top + rect.height + pad + 12 : rect.top - pad - 12 - tooltipHeight;
+    top = Math.min(Math.max(top, VIEWPORT_MARGIN), window.innerHeight - tooltipHeight - VIEWPORT_MARGIN);
+
+    const left = Math.min(
+      Math.max(rect.left, VIEWPORT_MARGIN),
+      window.innerWidth - TOOLTIP_WIDTH - VIEWPORT_MARGIN
+    );
+
+    return { top, left };
+  }
 
   return (
     <div className="fixed inset-0 z-[100]">
@@ -88,16 +121,9 @@ export function OnboardingTour({ steps, onDone }: OnboardingTourProps) {
 
       {/* Tooltip card */}
       <div
-        className="absolute w-[300px] bg-zinc-900 border border-white/10 rounded-2xl p-5 shadow-2xl transition-all duration-300 animate-fade-in"
-        style={
-          rect
-            ? {
-                top: tooltipBelow ? rect.top + rect.height + pad + 12 : undefined,
-                bottom: !tooltipBelow ? window.innerHeight - rect.top + pad + 12 : undefined,
-                left: Math.min(Math.max(rect.left, 16), window.innerWidth - 316),
-              }
-            : { top: "50%", left: "50%", transform: "translate(-50%, -50%)" }
-        }
+        ref={tooltipRef}
+        className="absolute bg-zinc-900 border border-white/10 rounded-2xl p-5 shadow-2xl transition-all duration-300 animate-fade-in"
+        style={{ width: TOOLTIP_WIDTH, ...tooltipStyle() }}
       >
         <div className="flex items-center gap-1.5 mb-3">
           {steps.map((_, i) => (
