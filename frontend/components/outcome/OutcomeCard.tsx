@@ -279,12 +279,38 @@ function RunnerSprite() {
   );
 }
 
-function ExitSignRunner() {
+/* Act 1 — the plain green exit pictogram, on its own, before anything else appears */
+function ExitPictogramTitleCard() {
+  const limb = "white" as const;
   return (
     <div
-      className="relative w-full h-80 overflow-hidden rounded-2xl bg-[#0a0c0a] border border-white/5"
-      style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
+      className="absolute inset-0 flex items-center justify-center"
+      style={{ animation: "titleCardPhase 5.6s ease-in-out infinite" }}
     >
+      <div className="relative w-36 h-36 rounded-3xl bg-emerald-600 flex items-center justify-center gap-1 shadow-[0_0_60px_rgba(16,185,129,0.4)] overflow-hidden">
+        <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 30px rgba(0,0,0,0.25)" }} />
+        {/* door frame */}
+        <svg width="26" height="62" viewBox="0 0 26 62" className="relative z-10">
+          <rect x="3" y="3" width="20" height="56" rx="1.5" fill="none" stroke={limb} strokeWidth="4" />
+        </svg>
+        {/* runner, static pose, scaled up as the hero icon */}
+        <svg viewBox="0 0 100 130" width="64" height="84" className="relative z-10" style={{ overflow: "visible" }}>
+          <circle cx="66" cy="16" r="10" fill={limb} />
+          <polyline points="60,24 40,62" stroke={limb} strokeWidth="15" strokeLinecap="round" fill="none" />
+          <polyline points="40,62 62,84 88,96" stroke={limb} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <polyline points="40,62 22,78 30,56" stroke={limb} strokeWidth="12" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <polyline points="60,24 44,34 28,26" stroke={limb} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <polyline points="60,24 74,38 66,54" stroke={limb} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+/* Act 2 — the full Shibuya platform scene, revealed by a transition ~1.3s in */
+function StationScene() {
+  return (
+    <div className="absolute inset-0" style={{ animation: "stationScenePhase 5.6s ease-in-out infinite" }}>
       {/* Perforated ceiling */}
       <div
         className="absolute top-0 left-0 w-full h-24"
@@ -323,10 +349,28 @@ function ExitSignRunner() {
         </div>
       </div>
 
-      {/* Hanging cable + sign fixture (the doorway the runner is bursting through) */}
+      {/* Departure board — flickering segment display, balances the nameplate */}
+      <div className="absolute top-3 left-3 bg-zinc-950/90 border border-white/10 rounded-md px-2 py-1.5 z-10 flex items-center gap-1">
+        {[0, 1, 2, 3].map((i) => (
+          <span
+            key={i}
+            className="w-1 h-2.5 bg-emerald-400/80 rounded-sm"
+            style={{ animation: `boardFlicker 4.2s ease-in-out ${i * 0.15}s infinite` }}
+          />
+        ))}
+      </div>
+
+      {/* Waiting passengers for platform depth */}
+      <div className="absolute bottom-6 left-[38%] w-3 h-9 bg-zinc-700/50 rounded-t-full" style={{ animation: "idleSway 3s ease-in-out infinite", transformOrigin: "bottom center" }} />
+      <div className="absolute bottom-6 left-[46%] w-3 h-8 bg-zinc-700/40 rounded-t-full" style={{ animation: "idleSway 3.6s ease-in-out 0.4s infinite", transformOrigin: "bottom center" }} />
+
+      {/* Screen flash the instant the runner reaches the train — the "made it" beat */}
+      <div className="absolute inset-0 bg-white pointer-events-none" style={{ animation: "arrivalFlash 5.6s ease-in-out infinite" }} />
+
+      {/* Hanging cable + sign fixture — a callback to the title card, now in-scene */}
       <div className="absolute top-14 left-[18%] flex flex-col items-center" style={{ animation: "cableSwing 4s ease-in-out infinite", transformOrigin: "top center" }}>
         <div className="w-0.5 h-6 bg-zinc-600" />
-        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 4.2s linear infinite" }}>
+        <div className="relative w-40 border-4 border-zinc-200 rounded-md shadow-[0_10px_50px_rgba(16,185,129,0.4)]" style={{ animation: "signFlicker 5.6s linear infinite" }}>
           <div className="bg-emerald-600 h-16 flex items-center justify-center px-2 relative overflow-hidden">
             <div className="absolute inset-0" style={{ boxShadow: "inset 0 0 30px rgba(0,0,0,0.3)" }} />
             <div className="flex flex-col items-center gap-0.5 z-10">
@@ -338,30 +382,32 @@ function ExitSignRunner() {
         <div className="w-40 h-1.5 bg-zinc-700 border-t border-white/10" />
       </div>
 
-      {/* Waiting train on the right, doors about to close */}
+      {/* Waiting train on the right — doors visibly slam shut the instant the runner arrives */}
       <div className="absolute bottom-6 right-0 w-16 h-28 bg-zinc-800/90 border-l border-t border-b border-white/10 rounded-l-md overflow-hidden">
         <div className="absolute top-2 left-1.5 right-1.5 h-8 bg-zinc-950/70 rounded-sm border border-white/5" />
-        <div className="absolute top-12 left-2 w-0.5 h-14 bg-zinc-950" />
+        {/* Sliding door panels, closed at rest, snap fully shut on arrival */}
+        <div className="absolute top-12 left-0 w-1/2 h-14 border-r border-zinc-950/80 bg-zinc-800/60" style={{ animation: "trainDoorLeftSlam 5.6s ease-in-out infinite" }} />
+        <div className="absolute top-12 right-0 w-1/2 h-14 border-l border-zinc-950/80 bg-zinc-800/60" style={{ animation: "trainDoorRightSlam 5.6s ease-in-out infinite" }} />
         <div
-          className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-amber-400"
-          style={{ animation: "doorCloseBlink 0.6s ease-in-out infinite" }}
+          className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
+          style={{ animation: "trainDepartFlash 5.6s ease-in-out infinite" }}
         />
       </div>
 
       {/* Motion streaks trailing the runner */}
       <div
         className="absolute bottom-11 left-0 flex flex-col gap-1.5"
-        style={{ animation: "streakFade 4.2s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+        style={{ animation: "streakFade 5.6s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
         <span className="block w-8 h-0.5 bg-emerald-300/70 rounded-full" />
         <span className="block w-6 h-0.5 bg-emerald-300/45 rounded-full" />
         <span className="block w-4 h-0.5 bg-emerald-300/25 rounded-full" />
       </div>
 
-      {/* Runner — already mid-stride at the doorway, then bolts for the train */}
+      {/* Runner — appears once the scene has fully materialized, then bolts for the train */}
       <div
         className="absolute bottom-6"
-        style={{ animation: "stationBurstDash 4.2s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
+        style={{ animation: "stationBurstDash 5.6s cubic-bezier(0.3,0.6,0.3,1) infinite" }}
       >
         <div
           className="drop-shadow-[0_0_20px_rgba(16,185,129,0.5)]"
@@ -383,6 +429,18 @@ function ExitSignRunner() {
       />
       {/* Floor reflection strip */}
       <div className="absolute bottom-3 left-0 w-full h-5 bg-gradient-to-t from-emerald-500/5 to-transparent" />
+    </div>
+  );
+}
+
+function ExitSignRunner() {
+  return (
+    <div
+      className="relative w-full h-80 overflow-hidden rounded-2xl bg-[#0a0c0a] border border-white/5"
+      style={{ animation: "sceneFadeIn 0.6s ease-out forwards" }}
+    >
+      <ExitPictogramTitleCard />
+      <StationScene />
     </div>
   );
 }
