@@ -1,0 +1,11 @@
+[
+  {
+    "id": "goal_jordan_travel",
+    "name": "Japan Trip Fund",
+    "target_amount": 2000.00,
+    "current_amount": 850.00,
+    "monthly_contribution_needed": 150.00,
+    "days_to_goal_at_current_pace": 210,
+    "created_at": "2026-02-01"
+  }
+]

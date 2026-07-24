@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, HTTPException
 
 from app.models.schemas import GoalsResponse, UpdateGoalRequest, UpdateGoalResponse
@@ -8,9 +10,9 @@ router = APIRouter()
 
 
 @router.get("/goals", response_model=GoalsResponse)
-async def get_goals(user_id: str = "demo"):
+async def get_goals(user_id: str = "demo", profile_id: Optional[str] = None):
     try:
-        goals = await nessie.get_goals(user_id)
+        goals = await nessie.get_goals(user_id, profile_id=profile_id)
 
         # Apply any in-memory mutations from this session
         updated = []

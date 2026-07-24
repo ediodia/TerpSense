@@ -36,7 +36,7 @@ async def analyze_purchase(body: PurchaseRequest):
                 "category": body.category,
                 "price": body.amount,
             }
-            agent_result = run_financial_agent(body.user_id, purchase_dict)
+            agent_result = run_financial_agent(body.user_id, purchase_dict, profile_id=body.profile_id)
             if agent_result:
                 return InterventionResponse(
                     severity=agent_result.get("severity", "yellow"),
@@ -55,12 +55,12 @@ async def analyze_purchase(body: PurchaseRequest):
         # Fallback: existing logic
         account_id = get_account_id(body.profile_id)
         goals, transactions = await asyncio.gather(
-            nessie.get_goals(body.user_id),
-            nessie.get_transactions(body.user_id, account_id=account_id),
+            nessie.get_goals(body.user_id, profile_id=body.profile_id),
+            nessie.get_transactions(body.user_id, account_id=account_id, profile_id=body.profile_id),
         )
         from app.config import settings
         spending_summary = (
-            load_precomputed_summary(body.user_id)
+            load_precomputed_summary(body.user_id, profile_id=body.profile_id)
             if settings.use_mock_data
             else compute_summary(transactions, body.user_id)
         )
@@ -122,7 +122,7 @@ async def record_decision(body: DecisionRequest):
             pass
 
         if body.decision == "redirect":
-            goals = await nessie.get_goals(body.user_id)
+            goals = await nessie.get_goals(body.user_id, profile_id=body.profile_id)
             if goals:
                 goal = goals[0]
                 current = goal_state.get(goal.id, goal.current_amount)

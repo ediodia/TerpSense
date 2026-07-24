@@ -1,0 +1,39 @@
+{
+  "user_id": "demo",
+  "profile_id": "jordan",
+  "profile_name": "Jordan Rivera",
+  "week": {
+    "Clothing": 22.00,
+    "Dining": 145.50,
+    "Entertainment": 85.00,
+    "Transport": 18.75,
+    "Subscriptions": 0.00,
+    "Health": 20.00
+  },
+  "month": {
+    "Clothing": 22.00,
+    "Dining": 173.50,
+    "Entertainment": 140.00,
+    "Transport": 30.75,
+    "Subscriptions": 40.97,
+    "Health": 20.00
+  },
+  "total_week": 291.25,
+  "total_month": 427.22,
+  "avg_weekly_spend": 180.00,
+  "category_weekly_averages": {
+    "Clothing": 30.00,
+    "Dining": 90.00,
+    "Entertainment": 40.00,
+    "Transport": 20.00,
+    "Subscriptions": 12.00,
+    "Health": 15.00
+  },
+  "category_weekly_counts": {
+    "Clothing": 1,
+    "Dining": 3,
+    "Entertainment": 2,
+    "Transport": 1,
+    "Health": 1
+  }
+}

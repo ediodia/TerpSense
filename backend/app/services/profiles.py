@@ -39,3 +39,10 @@ def get_profile(profile_id: Optional[str]) -> dict:
 
 def get_account_id(profile_id: Optional[str]) -> str:
     return get_profile(profile_id)["nessie_account_id"]
+
+
+def mock_file_suffix(profile_id: Optional[str]) -> str:
+    """Filename suffix for profile-specific mock data, e.g. '_jordan'. Alex (the
+    default profile) has no suffix — its files are the original unsuffixed ones."""
+    pid = get_profile(profile_id)["id"]
+    return "" if pid == DEFAULT_PROFILE_ID else f"_{pid}"

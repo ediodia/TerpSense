@@ -52,8 +52,10 @@ export async function getSpendingSummary(userId = "demo", profileId?: string): P
   return get<SpendingSummary>(`/spending-summary?${params}`);
 }
 
-export async function getGoals(userId = "demo"): Promise<Goal[]> {
-  const res = await get<GoalsResponse>(`/goals?user_id=${userId}`);
+export async function getGoals(userId = "demo", profileId?: string): Promise<Goal[]> {
+  const params = new URLSearchParams({ user_id: userId });
+  if (profileId) params.set("profile_id", profileId);
+  const res = await get<GoalsResponse>(`/goals?${params}`);
   return res.goals;
 }
 

@@ -138,9 +138,10 @@ def build_graph():
 compiled_graph = build_graph()
 
 
-def run_financial_agent(user_id: str, purchase: dict) -> dict:
+def run_financial_agent(user_id: str, purchase: dict, profile_id: str | None = None) -> dict:
     initial_state: AgentState = {
         "user_id": user_id,
+        "profile_id": profile_id,
         "purchase": purchase,
         "transactions": [],
         "spending_summary": {},

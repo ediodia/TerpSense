@@ -10,6 +10,7 @@ class Purchase(TypedDict):
 
 class AgentState(TypedDict):
     user_id: str
+    profile_id: Optional[str]
     purchase: Purchase
     transactions: list
     spending_summary: dict

@@ -1,6 +1,7 @@
 import json
 import os
 from app.agent.state import AgentState
+from app.services.profiles import mock_file_suffix
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 
@@ -14,20 +15,23 @@ def _load_json(filename: str) -> dict | list:
 
 
 def load_transactions(state: AgentState) -> AgentState:
-    transactions = _load_json("mock_transactions.json")
+    suffix = mock_file_suffix(state.get("profile_id"))
+    transactions = _load_json(f"mock_transactions{suffix}.json")
     state["transactions"] = transactions if isinstance(transactions, list) else []
     return state
 
 
 def load_spending_summary(state: AgentState) -> AgentState:
-    summary = _load_json("mock_spending_summary.json")
+    suffix = mock_file_suffix(state.get("profile_id"))
+    summary = _load_json(f"mock_spending_summary{suffix}.json")
     week = summary.get("week", {}) if isinstance(summary, dict) else {}
     state["spending_summary"] = week
     return state
 
 
 def load_goal(state: AgentState) -> AgentState:
-    goals = _load_json("mock_goals.json")
+    suffix = mock_file_suffix(state.get("profile_id"))
+    goals = _load_json(f"mock_goals{suffix}.json")
     state["goal"] = goals[0] if isinstance(goals, list) and goals else None
     return state
 

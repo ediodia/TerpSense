@@ -1,9 +1,10 @@
 import json
 from datetime import date, timedelta
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from app.models.schemas import SpendingSummary, Transaction
+from app.services.profiles import get_profile, mock_file_suffix
 
 DATA_DIR = Path(__file__).parent.parent / "data"
 
@@ -61,8 +62,13 @@ def compute_summary(transactions: List[Transaction], user_id: str = "demo") -> S
     )
 
 
-def load_precomputed_summary(user_id: str = "demo") -> SpendingSummary:
-    """Returns the pre-computed mock summary for instant dashboard load."""
-    with open(DATA_DIR / "mock_spending_summary.json") as f:
+def load_precomputed_summary(user_id: str = "demo", profile_id: Optional[str] = None) -> SpendingSummary:
+    """Returns the pre-computed mock summary for instant dashboard load, per profile."""
+    filename = f"mock_spending_summary{mock_file_suffix(profile_id)}.json"
+    with open(DATA_DIR / filename) as f:
         data = json.load(f)
-    return SpendingSummary(**data)
+    summary = SpendingSummary(**data)
+    profile = get_profile(profile_id)
+    summary.profile_id = profile["id"]
+    summary.profile_name = profile["name"]
+    return summary

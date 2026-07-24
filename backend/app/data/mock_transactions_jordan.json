@@ -1,0 +1,130 @@
+[
+  {
+    "id": "j01",
+    "amount": 68.00,
+    "category": "Dining",
+    "merchant": "Nobu",
+    "date": "2026-04-09",
+    "type": "purchase"
+  },
+  {
+    "id": "j02",
+    "amount": 42.50,
+    "category": "Dining",
+    "merchant": "Sweetgreen",
+    "date": "2026-04-08",
+    "type": "purchase"
+  },
+  {
+    "id": "j03",
+    "amount": 35.00,
+    "category": "Dining",
+    "merchant": "Shake Shack",
+    "date": "2026-04-10",
+    "type": "purchase"
+  },
+  {
+    "id": "j04",
+    "amount": 38.00,
+    "category": "Entertainment",
+    "merchant": "AMC Theatres",
+    "date": "2026-04-07",
+    "type": "purchase"
+  },
+  {
+    "id": "j05",
+    "amount": 47.00,
+    "category": "Entertainment",
+    "merchant": "Live Nation",
+    "date": "2026-04-09",
+    "type": "purchase"
+  },
+  {
+    "id": "j06",
+    "amount": 22.00,
+    "category": "Clothing",
+    "merchant": "H&M",
+    "date": "2026-04-06",
+    "type": "purchase"
+  },
+  {
+    "id": "j07",
+    "amount": 18.75,
+    "category": "Transport",
+    "merchant": "Uber",
+    "date": "2026-04-08",
+    "type": "purchase"
+  },
+  {
+    "id": "j08",
+    "amount": 15.99,
+    "category": "Subscriptions",
+    "merchant": "Netflix",
+    "date": "2026-04-01",
+    "type": "purchase"
+  },
+  {
+    "id": "j09",
+    "amount": 9.99,
+    "category": "Subscriptions",
+    "merchant": "Disney+",
+    "date": "2026-04-01",
+    "type": "purchase"
+  },
+  {
+    "id": "j10",
+    "amount": 14.99,
+    "category": "Subscriptions",
+    "merchant": "Spotify",
+    "date": "2026-04-01",
+    "type": "purchase"
+  },
+  {
+    "id": "j11",
+    "amount": 28.00,
+    "category": "Dining",
+    "merchant": "Chipotle",
+    "date": "2026-04-02",
+    "type": "purchase"
+  },
+  {
+    "id": "j12",
+    "amount": 55.00,
+    "category": "Entertainment",
+    "merchant": "Ticketmaster",
+    "date": "2026-04-03",
+    "type": "purchase"
+  },
+  {
+    "id": "j13",
+    "amount": 12.00,
+    "category": "Transport",
+    "merchant": "Lyft",
+    "date": "2026-04-02",
+    "type": "purchase"
+  },
+  {
+    "id": "j14",
+    "amount": 20.00,
+    "category": "Health",
+    "merchant": "CVS",
+    "date": "2026-04-04",
+    "type": "purchase"
+  },
+  {
+    "id": "j15",
+    "amount": 52.00,
+    "category": "Dining",
+    "merchant": "Din Tai Fung",
+    "date": "2026-03-29",
+    "type": "purchase"
+  },
+  {
+    "id": "j16",
+    "amount": 33.00,
+    "category": "Entertainment",
+    "merchant": "Dave & Buster's",
+    "date": "2026-03-27",
+    "type": "purchase"
+  }
+]

@@ -18,6 +18,7 @@ import { XPBadge } from "@/components/dashboard/XPBadge";
 import { AnimatedNumber } from "@/components/dashboard/AnimatedNumber";
 import { StreakBadge } from "@/components/dashboard/StreakBadge";
 import { ProtectedBadge } from "@/components/dashboard/ProtectedBadge";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { useSessionStore } from "@/store/sessionStore";
 import { useLoginStreak } from "@/lib/streak";
 import { getXP } from "@/lib/xp";
@@ -37,6 +38,7 @@ export default function DashboardPage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [switching, setSwitching] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [error, setError] = useState("");
   const [message] = useState(
     () => MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)]
@@ -55,12 +57,12 @@ export default function DashboardPage() {
   const { streak, justIncremented } = useLoginStreak(activeProfileId);
   const [xp, setXp] = useState(0);
 
-  async function loadData(profileId = activeProfileId) {
+  async function loadData(profileId = activeProfileId, opts: { silent?: boolean } = {}) {
     try {
-      setLoading(true);
+      if (!opts.silent) setLoading(true);
       const [s, g, t, p] = await Promise.all([
         getSpendingSummary("demo", profileId),
-        getGoals(),
+        getGoals("demo", profileId),
         getTransactions("demo", profileId),
         getProfiles(),
       ]);
@@ -74,14 +76,19 @@ export default function DashboardPage() {
     } catch {
       setError("Could not connect to TerpSense backend. Is the server running?");
     } finally {
-      setLoading(false);
+      if (!opts.silent) setLoading(false);
     }
   }
 
   async function handleReset() {
-    resetSession();
-    await resetDemo();
-    await loadData(activeProfileId);
+    setResetting(true);
+    try {
+      resetSession();
+      await resetDemo();
+      await loadData(activeProfileId, { silent: true });
+    } finally {
+      setResetting(false);
+    }
   }
 
   async function handleSwitchProfile() {
@@ -91,7 +98,7 @@ export default function DashboardPage() {
       const others = profiles.filter((p) => p.id !== activeProfileId);
       const next = others[Math.floor(Math.random() * others.length)];
       setActiveProfileId(next.id);
-      await loadData(next.id);
+      await loadData(next.id, { silent: true });
     } finally {
       setSwitching(false);
     }
@@ -106,14 +113,7 @@ export default function DashboardPage() {
   const activeProfile = profiles.find((p) => p.id === activeProfileId);
 
   if (loading) {
-    return (
-      <main className="min-h-screen bg-transparent flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-zinc-800 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-zinc-500 text-sm font-medium">Syncing data...</p>
-        </div>
-      </main>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (error) {
@@ -182,14 +182,29 @@ export default function DashboardPage() {
             </button>
             <button
               onClick={handleReset}
-              className="flex items-center justify-center px-4 h-10 bg-zinc-800/60 hover:bg-zinc-700/80 text-xs font-bold text-zinc-300 rounded-xl transition-all border border-white/5"
+              disabled={resetting}
+              className="flex items-center justify-center gap-2 px-4 h-10 bg-zinc-800/60 hover:bg-zinc-700/80 disabled:opacity-50 text-xs font-bold text-zinc-300 rounded-xl transition-all border border-white/5"
             >
+              {resetting && <span className="w-3 h-3 border-2 border-zinc-500 border-t-white rounded-full animate-spin" />}
               Reset
             </button>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {(switching || resetting) && (
+          <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-zinc-900/90 border border-emerald-500/20 backdrop-blur-xl px-4 py-2 rounded-full shadow-2xl animate-fade-in">
+            <span className="w-3.5 h-3.5 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+            <span className="text-xs font-bold text-zinc-300">
+              {switching ? "Switching profile..." : "Resetting demo..."}
+            </span>
+          </div>
+        )}
+
+        <div
+          className={`grid grid-cols-1 lg:grid-cols-12 gap-4 transition-opacity duration-300 ${
+            switching || resetting ? "opacity-50 pointer-events-none" : "opacity-100"
+          }`}
+        >
           <div className="lg:col-span-8 flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <SpendingGauge spent={totalSpent} budget={biweeklyBudget} />

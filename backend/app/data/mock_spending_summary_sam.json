@@ -1,0 +1,35 @@
+{
+  "user_id": "demo",
+  "profile_id": "sam",
+  "profile_name": "Sam Patel",
+  "week": {
+    "Shopping": 148.00,
+    "Subscriptions": 41.97,
+    "Dining": 30.00,
+    "Transport": 10.00,
+    "Health": 0.00
+  },
+  "month": {
+    "Shopping": 223.00,
+    "Subscriptions": 72.95,
+    "Dining": 70.00,
+    "Transport": 25.00,
+    "Health": 18.00
+  },
+  "total_week": 229.97,
+  "total_month": 408.95,
+  "avg_weekly_spend": 150.00,
+  "category_weekly_averages": {
+    "Shopping": 60.00,
+    "Subscriptions": 15.00,
+    "Dining": 35.00,
+    "Transport": 12.00,
+    "Health": 10.00
+  },
+  "category_weekly_counts": {
+    "Shopping": 4,
+    "Subscriptions": 3,
+    "Dining": 1,
+    "Transport": 1
+  }
+}

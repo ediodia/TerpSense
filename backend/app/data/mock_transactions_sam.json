@@ -1,0 +1,138 @@
+[
+  {
+    "id": "s01",
+    "amount": 15.00,
+    "category": "Shopping",
+    "merchant": "Temu",
+    "date": "2026-04-10",
+    "type": "purchase"
+  },
+  {
+    "id": "s02",
+    "amount": 45.00,
+    "category": "Shopping",
+    "merchant": "Amazon",
+    "date": "2026-04-09",
+    "type": "purchase"
+  },
+  {
+    "id": "s03",
+    "amount": 10.00,
+    "category": "Transport",
+    "merchant": "Uber",
+    "date": "2026-04-09",
+    "type": "purchase"
+  },
+  {
+    "id": "s04",
+    "amount": 30.00,
+    "category": "Dining",
+    "merchant": "Chipotle",
+    "date": "2026-04-08",
+    "type": "purchase"
+  },
+  {
+    "id": "s05",
+    "amount": 14.99,
+    "category": "Subscriptions",
+    "merchant": "Amazon Prime",
+    "date": "2026-04-07",
+    "type": "purchase"
+  },
+  {
+    "id": "s06",
+    "amount": 28.00,
+    "category": "Shopping",
+    "merchant": "Target",
+    "date": "2026-04-06",
+    "type": "purchase"
+  },
+  {
+    "id": "s07",
+    "amount": 9.99,
+    "category": "Subscriptions",
+    "merchant": "Disney+",
+    "date": "2026-04-06",
+    "type": "purchase"
+  },
+  {
+    "id": "s08",
+    "amount": 60.00,
+    "category": "Shopping",
+    "merchant": "Best Buy",
+    "date": "2026-04-05",
+    "type": "purchase"
+  },
+  {
+    "id": "s09",
+    "amount": 16.99,
+    "category": "Subscriptions",
+    "merchant": "HBO Max",
+    "date": "2026-04-05",
+    "type": "purchase"
+  },
+  {
+    "id": "s10",
+    "amount": 18.00,
+    "category": "Health",
+    "merchant": "CVS",
+    "date": "2026-04-03",
+    "type": "purchase"
+  },
+  {
+    "id": "s11",
+    "amount": 35.00,
+    "category": "Shopping",
+    "merchant": "SHEIN",
+    "date": "2026-04-03",
+    "type": "purchase"
+  },
+  {
+    "id": "s12",
+    "amount": 18.00,
+    "category": "Dining",
+    "merchant": "Panera",
+    "date": "2026-04-03",
+    "type": "purchase"
+  },
+  {
+    "id": "s13",
+    "amount": 40.00,
+    "category": "Shopping",
+    "merchant": "Etsy",
+    "date": "2026-04-02",
+    "type": "purchase"
+  },
+  {
+    "id": "s14",
+    "amount": 22.00,
+    "category": "Dining",
+    "merchant": "McDonald's",
+    "date": "2026-04-02",
+    "type": "purchase"
+  },
+  {
+    "id": "s15",
+    "amount": 15.00,
+    "category": "Transport",
+    "merchant": "Lyft",
+    "date": "2026-04-02",
+    "type": "purchase"
+  },
+  {
+    "id": "s16",
+    "amount": 15.99,
+    "category": "Subscriptions",
+    "merchant": "Netflix",
+    "date": "2026-04-01",
+    "type": "purchase"
+  },
+  {
+    "id": "s17",
+    "amount": 14.99,
+    "category": "Subscriptions",
+    "merchant": "Spotify",
+    "date": "2026-04-01",
+    "type": "purchase"
+  }
+]

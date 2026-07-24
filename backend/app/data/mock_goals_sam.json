@@ -1,0 +1,11 @@
+[
+  {
+    "id": "goal_sam_cushion",
+    "name": "Emergency Cushion",
+    "target_amount": 800.00,
+    "current_amount": 120.00,
+    "monthly_contribution_needed": 85.00,
+    "days_to_goal_at_current_pace": 240,
+    "created_at": "2026-03-01"
+  }
+]
