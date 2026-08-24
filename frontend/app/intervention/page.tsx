@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { useSessionStore } from '@/store/sessionStore';
-import { recordDecision } from '@/lib/api';
+import { recordDecision, recordPersonalDecision } from '@/lib/api';
 import { formatCurrency, pluralize, SEVERITY_TOKENS } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/dashboard/AnimatedNumber';
 import { ProtectedAmount } from '@/components/dashboard/ProtectedBadge';
@@ -15,6 +16,7 @@ import type { Decision } from '@/types';
 export default function InterventionPage() {
   const router = useRouter();
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  const { data: authSession } = useSession();
 
   const {
     pendingPurchase,
@@ -23,16 +25,20 @@ export default function InterventionPage() {
     activeGoal,
     activeProfileId,
     spendingSummary,
+    mode,
+    personalBudget,
     setDecision,
     setUpdatedGoalAmount,
     setDashboardNeedsRefresh,
   } = useSessionStore();
 
+  const isPersonal = mode === 'personal';
   const { streak } = useLoginStreak(activeProfileId);
   const totalSpentThisWeek = spendingSummary
     ? Object.values(spendingSummary.week).reduce((a, b) => a + b, 0)
     : 0;
-  const totalProtected = Math.max(0, BIWEEKLY_BUDGET - totalSpentThisWeek);
+  const budgetCap = isPersonal ? personalBudget?.safe_to_spend_weekly ?? 0 : BIWEEKLY_BUDGET;
+  const totalProtected = Math.max(0, budgetCap - totalSpentThisWeek);
 
   const [messages, setMessages] = useState([
     { role: 'assistant', content: "I flagged this transaction based on your current trajectory. Ask me anything like can I afford this or what is the alternative." },
@@ -121,14 +127,22 @@ export default function InterventionPage() {
   async function handleDecision(decisionType: Decision) {
     setIsSubmittingDecision(true);
     try {
-      const data = await recordDecision({
-        user_id: 'demo',
-        purchase_amount: pendingPurchase!.amount,
-        category: pendingPurchase!.category,
-        merchant: pendingPurchase!.merchant,
-        decision: decisionType,
-        profile_id: activeProfileId,
-      });
+      const data =
+        isPersonal && authSession?.backendToken
+          ? await recordPersonalDecision(authSession.backendToken, {
+              purchase_amount: pendingPurchase!.amount,
+              category: pendingPurchase!.category,
+              merchant: pendingPurchase!.merchant,
+              decision: decisionType,
+            })
+          : await recordDecision({
+              user_id: 'demo',
+              purchase_amount: pendingPurchase!.amount,
+              category: pendingPurchase!.category,
+              merchant: pendingPurchase!.merchant,
+              decision: decisionType,
+              profile_id: activeProfileId,
+            });
 
       if (data.updated_goal_amount != null) {
         setUpdatedGoalAmount(data.updated_goal_amount);

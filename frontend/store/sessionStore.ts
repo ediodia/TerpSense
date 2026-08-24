@@ -1,11 +1,13 @@
 import { create } from "zustand";
-import type { Decision, Goal, InterventionResult, SpendingSummary, TransactionCategory } from "@/types";
+import type { BudgetPlan, Decision, Goal, InterventionResult, SpendingSummary, TransactionCategory } from "@/types";
 
 interface PendingPurchase {
   amount: number;
   category: TransactionCategory;
   merchant?: string;
 }
+
+export type AppMode = "mock" | "personal";
 
 interface SessionState {
   pendingPurchase: PendingPurchase | null;
@@ -16,6 +18,8 @@ interface SessionState {
   activeProfileId: string;
   spendingSummary: SpendingSummary | null;
   dashboardNeedsRefresh: boolean;
+  mode: AppMode;
+  personalBudget: BudgetPlan | null;
 
   setPendingPurchase: (purchase: PendingPurchase) => void;
   setInterventionResult: (result: InterventionResult) => void;
@@ -25,6 +29,8 @@ interface SessionState {
   setActiveProfileId: (profileId: string) => void;
   setSpendingSummary: (summary: SpendingSummary) => void;
   setDashboardNeedsRefresh: (val: boolean) => void;
+  setMode: (mode: AppMode) => void;
+  setPersonalBudget: (budget: BudgetPlan | null) => void;
   resetSession: () => void;
 }
 
@@ -37,6 +43,8 @@ export const useSessionStore = create<SessionState>((set) => ({
   activeProfileId: "alex",
   spendingSummary: null,
   dashboardNeedsRefresh: false,
+  mode: "mock",
+  personalBudget: null,
 
   // Staging a new purchase always starts a fresh decision — otherwise a stale
   // `decision` from a previous purchase could make the new intervention page
@@ -49,6 +57,8 @@ export const useSessionStore = create<SessionState>((set) => ({
   setActiveProfileId: (profileId) => set({ activeProfileId: profileId }),
   setSpendingSummary: (summary) => set({ spendingSummary: summary }),
   setDashboardNeedsRefresh: (val) => set({ dashboardNeedsRefresh: val }),
+  setMode: (mode) => set({ mode }),
+  setPersonalBudget: (budget) => set({ personalBudget: budget }),
   resetSession: () =>
     set({
       pendingPurchase: null,

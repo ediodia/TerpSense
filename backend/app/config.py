@@ -13,9 +13,18 @@ class Settings(BaseSettings):
     use_mock_data: bool = True
     demo_user_id: str = "demo"
 
+    database_url: str = "sqlite:///./terpsense.db"
+    auth_secret: str = "dev-only-insecure-secret-change-me"
+    # Comma-separated list, e.g. "http://localhost:3000,https://terp-sense.vercel.app"
+    frontend_origin: str = "http://localhost:3000"
+
     class Config:
         env_file = ".env"
         case_sensitive = False
+
+    @property
+    def frontend_origins(self) -> list[str]:
+        return [o.strip() for o in self.frontend_origin.split(",") if o.strip()]
 
 
 settings = Settings()

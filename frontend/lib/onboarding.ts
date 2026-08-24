@@ -2,18 +2,21 @@
 
 import { useEffect, useState } from "react";
 
-const KEY = "terpsense_onboarding_seen";
+function key(mode: "mock" | "personal"): string {
+  return mode === "personal" ? "terpsense_onboarding_seen_personal" : "terpsense_onboarding_seen";
+}
 
-export function useOnboarding() {
+export function useOnboarding(mode: "mock" | "personal" = "mock") {
   const [shouldShow, setShouldShow] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!window.localStorage.getItem(KEY)) setShouldShow(true);
-  }, []);
+    if (!window.localStorage.getItem(key(mode))) setShouldShow(true);
+    else setShouldShow(false);
+  }, [mode]);
 
   function dismiss() {
-    if (typeof window !== "undefined") window.localStorage.setItem(KEY, "1");
+    if (typeof window !== "undefined") window.localStorage.setItem(key(mode), "1");
     setShouldShow(false);
   }
 

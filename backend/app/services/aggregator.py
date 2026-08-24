@@ -15,9 +15,11 @@ DEMO_TODAY = date(2026, 4, 11)
 TRACKED_CATEGORIES = ["Clothing", "Dining", "Entertainment", "Transport", "Subscriptions", "Health", "Shopping", "Other"]
 
 
-def compute_summary(transactions: List[Transaction], user_id: str = "demo") -> SpendingSummary:
-    week_start = DEMO_TODAY - timedelta(days=7)
-    month_start = DEMO_TODAY.replace(day=1)
+def compute_summary(
+    transactions: List[Transaction], user_id: str = "demo", reference_date: date = DEMO_TODAY
+) -> SpendingSummary:
+    week_start = reference_date - timedelta(days=7)
+    month_start = reference_date.replace(day=1)
 
     week: dict[str, float] = {c: 0.0 for c in TRACKED_CATEGORIES}
     month: dict[str, float] = {c: 0.0 for c in TRACKED_CATEGORIES}

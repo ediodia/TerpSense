@@ -16,12 +16,20 @@ export default function LandingPage() {
               Terp<span className="text-emerald-500 font-black">Sense</span>
             </span>
           </div>
-          <Link
-            href="/dashboard"
-            className="text-xs font-bold text-zinc-400 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/5"
-          >
-            Skip to dashboard →
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/login"
+              className="text-xs font-bold text-zinc-400 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/5"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/dashboard"
+              className="text-xs font-bold text-zinc-400 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/5"
+            >
+              Skip to dashboard →
+            </Link>
+          </div>
         </nav>
 
         <div className="flex-1 flex flex-col items-center justify-center text-center gap-6 pb-20">
@@ -38,13 +46,19 @@ export default function LandingPage() {
             TerpSense catches risky purchases before checkout, grounds every insight in your real spending data, and turns saving money into something that feels like winning.
           </p>
 
-          <div className="flex items-center gap-3 mt-4">
+          <div className="flex items-center gap-3 mt-4 flex-wrap justify-center">
             <Link
               href="/dashboard"
               className="group relative overflow-hidden inline-flex items-center gap-2 bg-emerald-500 text-zinc-950 font-black px-8 py-4 rounded-2xl text-base shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
             >
-              Get started
+              Try the mock demo
               <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center gap-2 bg-zinc-900/60 border border-white/10 text-zinc-200 font-bold px-8 py-4 rounded-2xl text-base transition-all duration-300 hover:border-white/20 hover:bg-zinc-900"
+            >
+              Use my real budget
             </Link>
           </div>
         </div>

@@ -84,3 +84,58 @@ export interface DecisionResponse {
   updated_goal_amount?: number;
   confirmation_message: string;
 }
+
+// --- Personal mode: real financial data ---
+
+export type PayFrequency = "weekly" | "biweekly" | "monthly";
+export type RiskTolerance = "conservative" | "balanced" | "aggressive";
+
+export interface RecurringExpense {
+  name: string;
+  amount: number;
+  category: TransactionCategory | string;
+  frequency: PayFrequency;
+}
+
+export interface SavingsGoalInput {
+  name: string;
+  target_amount: number;
+  target_date?: string | null;
+}
+
+export interface FinancialProfileRequest {
+  pay_amount: number;
+  pay_frequency: PayFrequency;
+  next_pay_date: string;
+  risk_tolerance: RiskTolerance;
+  expenses: RecurringExpense[];
+  goal?: SavingsGoalInput | null;
+}
+
+export interface BudgetPlan {
+  weekly_income: number;
+  essentials_weekly: number;
+  savings_weekly: number;
+  safe_to_spend_weekly: number;
+  warning: string | null;
+  distress: boolean;
+}
+
+export interface FinancialProfileResponse {
+  pay_amount: number;
+  pay_frequency: PayFrequency;
+  next_pay_date: string;
+  risk_tolerance: RiskTolerance;
+  expenses: RecurringExpense[];
+  goal: Goal | null;
+  budget: BudgetPlan;
+  spending_summary: SpendingSummary;
+}
+
+export interface PersonalTransactionInput {
+  amount: number;
+  category: TransactionCategory;
+  merchant?: string;
+  date: string;
+  type: "purchase" | "income";
+}

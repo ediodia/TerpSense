@@ -2,7 +2,15 @@
 
 import { useEffect, useState } from "react";
 
-export function SpendingGauge({ spent, budget }: { spent: number; budget: number }) {
+export function SpendingGauge({
+  spent,
+  budget,
+  label = "Biweekly Budget",
+}: {
+  spent: number;
+  budget: number;
+  label?: string;
+}) {
   const [animated, setAnimated] = useState(0);
   const percent = Math.min(100, Math.round((spent / budget) * 100));
   const radius = 40;
@@ -41,7 +49,7 @@ export function SpendingGauge({ spent, budget }: { spent: number; budget: number
           </div>
         </div>
         <div className="flex-1">
-          <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1">Biweekly Budget</p>
+          <p className="text-xs text-zinc-500 uppercase tracking-widest font-bold mb-1">{label}</p>
           <p className="text-2xl font-black text-white tracking-tight">${spent.toFixed(2)}</p>
           <p className="text-sm font-medium text-zinc-400">of ${budget}</p>
           <div className="mt-3 inline-flex items-center px-2.5 py-1 rounded-lg bg-zinc-950 border border-white/5">

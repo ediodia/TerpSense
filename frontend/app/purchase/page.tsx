@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { analyzePurchase } from "@/lib/api";
+import { useSession } from "next-auth/react";
+import { analyzePersonalPurchase, analyzePurchase } from "@/lib/api";
 import type { TransactionCategory } from "@/types";
 import { PurchaseForm } from "@/components/purchase/PurchaseForm";
 import { useSessionStore } from "@/store/sessionStore";
@@ -12,12 +13,15 @@ import { formatCurrency } from "@/lib/utils";
 
 export default function PurchasePage() {
   const router = useRouter();
+  const { data: authSession } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [previewAmount, setPreviewAmount] = useState("");
   const [previewCategory, setPreviewCategory] = useState<TransactionCategory>("Clothing");
 
-  const { setPendingPurchase, setInterventionResult, activeProfileId, spendingSummary } = useSessionStore();
+  const { setPendingPurchase, setInterventionResult, activeProfileId, spendingSummary, mode, personalBudget } =
+    useSessionStore();
+  const isPersonal = mode === "personal";
 
   const parsedPreviewAmount = parseFloat(previewAmount);
   const hasPreviewAmount = !isNaN(parsedPreviewAmount) && parsedPreviewAmount > 0;
@@ -28,7 +32,9 @@ export default function PurchasePage() {
   const totalSpentThisWeek = spendingSummary
     ? Object.values(spendingSummary.week).reduce((a, b) => a + b, 0)
     : 0;
-  const budgetHeadroom = Math.max(0, BIWEEKLY_BUDGET - totalSpentThisWeek);
+  const budgetCap = isPersonal ? personalBudget?.safe_to_spend_weekly ?? 0 : BIWEEKLY_BUDGET;
+  const budgetHeadroom = Math.max(0, budgetCap - totalSpentThisWeek);
+  const budgetHeadroomLabel = isPersonal ? "left in this week's safe-to-spend" : "left in this biweekly budget";
 
   async function handleSubmit(
     amount: number,
@@ -42,13 +48,16 @@ export default function PurchasePage() {
       // Synchronously stage state inside client data layer
       setPendingPurchase({ amount, category, merchant });
 
-      const result = await analyzePurchase({
-        user_id: "demo",
-        amount,
-        category,
-        merchant,
-        profile_id: activeProfileId,
-      });
+      const result =
+        isPersonal && authSession?.backendToken
+          ? await analyzePersonalPurchase(authSession.backendToken, { amount, category, merchant })
+          : await analyzePurchase({
+              user_id: "demo",
+              amount,
+              category,
+              merchant,
+              profile_id: activeProfileId,
+            });
 
       setInterventionResult(result);
       router.push("/intervention");
@@ -147,7 +156,7 @@ export default function PurchasePage() {
             <div className="pt-3 border-t border-white/5">
               <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Budget headroom</p>
               <p className="text-lg font-black text-white">{formatCurrency(budgetHeadroom)}</p>
-              <p className="text-[10px] text-zinc-500 mt-0.5">left in this biweekly budget</p>
+              <p className="text-[10px] text-zinc-500 mt-0.5">{budgetHeadroomLabel}</p>
             </div>
           </div>
         </div>

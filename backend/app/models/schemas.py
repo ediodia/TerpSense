@@ -1,3 +1,4 @@
+from datetime import date as date_type
 from typing import List, Literal, Optional
 from pydantic import BaseModel, Field
 
@@ -58,6 +59,67 @@ class DecisionRequest(BaseModel):
 class UpdateGoalRequest(BaseModel):
     goal_id: str
     amount_to_add: float
+
+
+# --- Personal mode: real financial data ---
+# Amounts are bounded well above any plausible individual paycheck/bill —
+# a guardrail against fat-finger inputs (e.g. an extra zero) skewing the
+# budget engine into nonsensical recommendations.
+MAX_PLAUSIBLE_AMOUNT = 1_000_000
+
+
+class RecurringExpenseIn(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    amount: float = Field(gt=0, le=MAX_PLAUSIBLE_AMOUNT)
+    category: str = "Other"
+    frequency: Literal["weekly", "biweekly", "monthly"] = "monthly"
+
+
+class SavingsGoalIn(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    target_amount: float = Field(gt=0, le=MAX_PLAUSIBLE_AMOUNT)
+    target_date: Optional[date_type] = None
+
+
+class FinancialProfileRequest(BaseModel):
+    pay_amount: float = Field(gt=0, le=MAX_PLAUSIBLE_AMOUNT)
+    pay_frequency: Literal["weekly", "biweekly", "monthly"]
+    next_pay_date: date_type
+    risk_tolerance: Literal["conservative", "balanced", "aggressive"] = "balanced"
+    expenses: List[RecurringExpenseIn] = []
+    goal: Optional[SavingsGoalIn] = None
+
+
+class BudgetPlanOut(BaseModel):
+    weekly_income: float
+    essentials_weekly: float
+    savings_weekly: float
+    safe_to_spend_weekly: float
+    warning: Optional[str] = None
+    distress: bool = False
+
+
+class FinancialProfileResponse(BaseModel):
+    pay_amount: float
+    pay_frequency: str
+    next_pay_date: str
+    risk_tolerance: str
+    expenses: List[RecurringExpenseIn]
+    goal: Optional[Goal] = None
+    budget: BudgetPlanOut
+    spending_summary: SpendingSummary
+
+
+class PersonalTransactionIn(BaseModel):
+    amount: float = Field(gt=0, le=MAX_PLAUSIBLE_AMOUNT)
+    category: str
+    merchant: Optional[str] = None
+    date: date_type
+    type: Literal["purchase", "income"] = "purchase"
+
+
+class PersonalTransactionsResponse(BaseModel):
+    transactions: List[Transaction]
 
 
 # --- Response models ---

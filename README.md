@@ -47,7 +47,9 @@ Young adults do not struggle with money because they lack charts or dashboards. 
 | Backend | FastAPI, Python |
 | AI | Azure OpenAI (GPT-5.4-mini), TerpAI LangGraph |
 | Mock Data | Capital One Nessie API |
-| State | In memory session state |
+| Auth | NextAuth.js (Google, Microsoft Entra ID, email/password) |
+| Personal Data | SQLite via SQLAlchemy (swappable to Postgres) |
+| State | In memory session state (mock mode only) |
 
 ---
 
@@ -136,17 +138,36 @@ AZURE_OPENAI_DEPLOYMENT=gpt-5.4-mini
 AZURE_OPENAI_API_VERSION=2024-12-01-preview
 NESSIE_API_KEY=your_nessie_key
 USE_MOCK_DATA=true
+
+DATABASE_URL=sqlite:///./terpsense.db
+AUTH_SECRET=<same value as frontend's AUTH_SECRET>
+FRONTEND_ORIGIN=http://localhost:3000
 ```
 
 > Deployment names and API versions are tied to whatever model you deploy in the Azure Portal, if you deploy a different model, update `AZURE_OPENAI_DEPLOYMENT` and `AZURE_OPENAI_API_VERSION` to match the values shown on that deployment's "Get Started" page.
+
+`DATABASE_URL` backs real user accounts and personal-mode financial data (see [Personal Mode](#personal-mode-real-accounts--real-budgets) below) — defaults to a local SQLite file, swap it for a Postgres URL to run against a real database. `AUTH_SECRET` must be byte-for-byte identical to the frontend's `AUTH_SECRET`, since this backend verifies the JWTs NextAuth issues.
 
 ### Frontend (`frontend/.env.local`)
 
 ```text
 NEXT_PUBLIC_API_URL=http://localhost:8000
+AUTH_SECRET=<same value as backend's AUTH_SECRET>
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+MICROSOFT_CLIENT_ID=
+MICROSOFT_CLIENT_SECRET=
+MICROSOFT_TENANT_ID=common
 ```
 
 Set `USE_MOCK_DATA=true` to use local JSON fixtures instead of the live Nessie API. Recommended for demos.
+
+Generate an `AUTH_SECRET` with `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"` and use the same value on both sides.
+
+Google/Microsoft sign-in only work once you've registered your own OAuth apps (email/password sign-in and the mock demo work with none of this configured):
+
+- **Google**: [Google Cloud Console → APIs & Services → Credentials](https://console.cloud.google.com/apis/credentials) → create an OAuth client ID, type "Web application", authorized redirect URI `http://localhost:3000/api/auth/callback/google`.
+- **Microsoft**: [Microsoft Entra admin center → App registrations → New registration](https://entra.microsoft.com), supported account types "Personal Microsoft accounts and work/school accounts", redirect URI `http://localhost:3000/api/auth/callback/microsoft-entra-id`.
 
 ---
 
@@ -160,12 +181,33 @@ Set `USE_MOCK_DATA=true` to use local JSON fixtures instead of the live Nessie A
 | GET | `/spending-summary` | Aggregated category spending for a profile |
 | GET | `/goals` | Active savings goals for a profile |
 | POST | `/update-goal` | Manually add a contribution to a goal |
-| POST | `/analyze-purchase` | Run AI intervention analysis |
+| POST | `/analyze-purchase` | Run AI intervention analysis (mock or personal, based on auth) |
 | POST | `/record-decision` | Log user decision, update goal |
 | POST | `/reset-demo` | Reset session state for demo |
 | POST | `/api/chat` | Chat with Kaizen about the current purchase decision |
+| POST | `/auth/register` | Create an email/password account |
+| POST | `/auth/verify-password` | Verify credentials (used by NextAuth, not called directly) |
+| POST | `/auth/oauth-upsert` | Get-or-create a user for Google/Microsoft sign-in (used by NextAuth) |
+| GET/POST | `/financial-profile` | Fetch or create/update a signed-in user's pay, bills, goal, and computed budget |
+| GET/POST | `/personal-transactions` | List or log a signed-in user's real transactions |
 
-All of `/transactions`, `/spending-summary`, `/goals`, and `/analyze-purchase` accept a `profile_id` query/body param (`alex`, `jordan`, or `sam`) — each profile is backed by its own mock data, not a shared fixture.
+All of `/transactions`, `/spending-summary`, `/goals`, and `/analyze-purchase` accept a `profile_id` query/body param (`alex`, `jordan`, or `sam`) for mock mode — each profile is backed by its own mock data, not a shared fixture. `/financial-profile`, `/personal-transactions`, and personal-mode calls to `/analyze-purchase`/`/record-decision` instead require an `Authorization: Bearer <token>` header and are always scoped to the authenticated user — never to a client-supplied id.
+
+---
+
+## Personal Mode: real accounts, real budgets
+
+Alongside the mock demo, TerpSense now supports a **personal mode**: sign in (Google, Microsoft, or email/password) and enter your real pay, recurring bills, and a savings goal. TerpSense computes a safe weekly spending number from those real numbers — the same intervention/severity engine that powers the mock demo, just fed real data instead of fixtures — and walks you through a short onboarding tour the first time you land on your personal dashboard.
+
+**Guardrails**, enforced server-side on every request (never trusted from the client):
+
+- Essentials + savings contributions can never eat more than 90% of your income — there's always a safe discretionary buffer left over, no matter how aggressive your goal is.
+- If a savings goal's deadline isn't affordable at your current income, TerpSense clamps the contribution to a safe pace and tells you so, instead of over-recommending.
+- If your recurring bills alone exceed your income, TerpSense shows a distress warning and stops recommending any savings contribution until that's resolved.
+- Every personal-data endpoint requires a valid signed-in session and is scoped to that user only.
+- TerpSense never moves real money — "redirect to savings" only updates its own bookkeeping.
+
+This is not financial advice — it's a budgeting and behavior nudge tool.
 
 ---
 
