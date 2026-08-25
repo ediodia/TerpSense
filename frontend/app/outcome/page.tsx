@@ -56,7 +56,7 @@ export default function OutcomePage() {
   const safeMessage = CONFIRMATION_MESSAGES[decision] || "Your transaction configuration has been successfully updated.";
 
   return (
-    <main className="min-h-screen bg-[#09090b] text-zinc-100 font-sans relative overflow-hidden flex flex-col items-center justify-center py-12 px-4 sm:px-6">
+    <main className="min-h-screen bg-transparent text-zinc-100 font-sans relative overflow-hidden flex flex-col items-center justify-center py-12 px-4 sm:px-6">
       {/* Background Ambient Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[500px] bg-emerald-500/5 blur-[120px] pointer-events-none rounded-full" />
 

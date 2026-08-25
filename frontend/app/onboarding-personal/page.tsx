@@ -134,7 +134,7 @@ export default function OnboardingPersonalPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#09090b] text-zinc-100 font-sans flex items-center justify-center px-6 py-12 relative overflow-hidden">
+    <main className="min-h-screen bg-transparent text-zinc-100 font-sans flex items-center justify-center px-6 py-12 relative overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-emerald-500/10 blur-[140px] pointer-events-none rounded-full" />
 
       <div className="relative z-10 w-full max-w-lg flex flex-col gap-6">

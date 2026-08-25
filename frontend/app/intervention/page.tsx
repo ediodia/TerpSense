@@ -165,7 +165,7 @@ export default function InterventionPage() {
   const compoundValue10Yr = pendingPurchase.amount * Math.pow(1.1, 10);
 
   return (
-    <main className="w-screen h-[100dvh] bg-[#09090b] text-white overflow-hidden selection:bg-emerald-500/30 font-sans p-6 flex flex-col relative">
+    <main className="w-screen h-[100dvh] bg-transparent text-white overflow-hidden selection:bg-emerald-500/30 font-sans p-6 flex flex-col relative">
       <div className="flex items-center gap-3 mb-4 flex-shrink-0 relative z-50">
         <button
           onClick={() => router.push('/dashboard')}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { CursorGlow } from "@/components/ui/CursorGlow";
+import { FloatingParticles } from "@/components/ui/FloatingParticles";
 import { AuthSessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
         <AuthSessionProvider>
           {/* Dynamic mouse gradient background */}
           <CursorGlow />
+          <FloatingParticles />
 
           {/* Main app content sitting above the background */}
           <div className="relative z-10">

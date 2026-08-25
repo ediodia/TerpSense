@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-[#09090b] text-zinc-100 font-sans overflow-hidden relative">
+    <main className="min-h-screen bg-transparent text-zinc-100 font-sans overflow-hidden relative">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[600px] bg-emerald-500/10 blur-[140px] pointer-events-none rounded-full" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[500px] bg-blue-500/5 blur-[120px] pointer-events-none rounded-full" />
 
@@ -49,7 +49,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-3 mt-4 flex-wrap justify-center">
             <Link
               href="/dashboard"
-              className="group relative overflow-hidden inline-flex items-center gap-2 bg-emerald-500 text-zinc-950 font-black px-8 py-4 rounded-2xl text-base shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
+              className="group relative overflow-hidden inline-flex items-center gap-2 bg-emerald-500 text-zinc-950 font-black px-8 py-4 rounded-2xl text-base cta-glow transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
             >
               Try the mock demo
               <span className="group-hover:translate-x-1 transition-transform">→</span>

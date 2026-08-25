@@ -458,7 +458,7 @@ export default function DashboardPage() {
             <Link
               href="/purchase"
               data-tour="evaluate-btn"
-              className="group relative overflow-hidden inline-flex items-center justify-center gap-2 bg-emerald-500 text-zinc-950 font-black py-5 rounded-3xl text-lg shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
+              className="group relative overflow-hidden inline-flex items-center justify-center gap-2 bg-emerald-500 text-zinc-950 font-black py-5 rounded-3xl text-lg cta-glow transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(16,185,129,0.3)]"
             >
               <span className="relative z-10 font-bold tracking-tight">Evaluate a Purchase</span>
               <span className="relative z-10 group-hover:translate-x-1 transition-transform">→</span>

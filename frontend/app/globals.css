@@ -426,3 +426,24 @@ input[type="number"] {
     transform: translateX(200%);
   }
 }
+
+/* --- Ambient floating particles, used by FloatingParticles --- */
+@keyframes particleDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(var(--dx, 10px), var(--dy, -20px)) scale(1.2); }
+}
+
+@keyframes particleTwinkle {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.9; }
+}
+
+/* --- Breathing glow on primary CTAs --- */
+@keyframes ctaPulse {
+  0%, 100% { box-shadow: 0 0 24px 0 rgba(16, 185, 129, 0.25); }
+  50%      { box-shadow: 0 0 36px 4px rgba(16, 185, 129, 0.45); }
+}
+
+.cta-glow {
+  animation: ctaPulse 2.5s ease-in-out infinite;
+}

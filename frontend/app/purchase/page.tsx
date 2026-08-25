@@ -69,7 +69,7 @@ export default function PurchasePage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#09090b] text-zinc-100 font-sans relative overflow-hidden flex flex-col items-center py-12 px-4 sm:px-6">
+    <main className="min-h-screen bg-transparent text-zinc-100 font-sans relative overflow-hidden flex flex-col items-center py-12 px-4 sm:px-6">
       {/* Background Radial Ambient Mesh Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-500/5 blur-[120px] pointer-events-none rounded-full" />
 
