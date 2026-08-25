@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { TerpSenseLogo } from "@/components/ui/Logo";
+import { TerpSenseLogo } from "@/components/dashboard/TerpSenseLogo";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { registerUser } from "@/lib/api";
@@ -51,7 +51,7 @@ export default function SignupPage() {
 
       <div className="relative z-10 w-full max-w-sm flex flex-col gap-6">
         <div className="flex flex-col items-center gap-4">
-          <TerpSenseLogo size="lg" />
+          <TerpSenseLogo />
           <p className="text-sm text-zinc-400 text-center">
             Create an account to set up your real budget.
           </p>

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { TerpSenseLogo } from "@/components/ui/Logo";
+import { TerpSenseLogo } from "@/components/dashboard/TerpSenseLogo";
 import { CATEGORY_ICONS } from "@/lib/constants";
 import { saveFinancialProfile } from "@/lib/api";
 import type { PayFrequency, RecurringExpense, RiskTolerance } from "@/types";
@@ -139,7 +139,7 @@ export default function OnboardingPersonalPage() {
 
       <div className="relative z-10 w-full max-w-lg flex flex-col gap-6">
         <div className="flex flex-col items-center gap-3">
-          <TerpSenseLogo size="lg" />
+          <TerpSenseLogo />
           <p className="text-sm text-zinc-400 text-center max-w-sm">
             A few real numbers, and TerpSense will compute a safe weekly budget for you — grounded
             in your actual pay and bills, not a guess.
