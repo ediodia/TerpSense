@@ -191,7 +191,7 @@ export default function DashboardPage() {
       setXp(getXP(authSession.user.id));
       setError("");
     } catch (err) {
-      if (err instanceof Error && err.message.includes("400")) {
+      if (err instanceof Error && (err.message.includes("400") || err.message.includes("404"))) {
         router.push("/onboarding-personal");
         return;
       }
